@@ -1,0 +1,135 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Blog</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="author" content="">
+    <meta name="generator" content="Hugo 0.30.2" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+</head>
+
+<body>
+    <div id="container">
+        <header>
+            <h1>
+                <a href="/">My Blog</a>
+            </h1>
+
+            <ul id="social-media">
+                
+        
+                
+        
+                
+        
+                
+        
+                
+        
+                
+            </ul>
+            
+            <p><em>A Hugo theme for creative and technical writing</em></p>
+            
+        </header>
+
+        
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About Hugo</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+        
+        <main>
+
+
+
+<article>
+
+    <h1>Using Purrr to Build Custom Reports</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2017-11-17T00:00:00Z">
+                Nov 17nd, 2017
+            </time>
+        </li>
+        
+        
+
+        
+
+        <li>1 min read</li>
+    </ul>
+</aside>
+    
+
+    <p>In this post I’m going to show you how I use <code>purrr</code> to generate custom reports and plots for clients. My day job involves analyzing data for school districts and generating reports and plots for each district. Public education data is often aggregated at the county level, so data from all the school districts are contained in the same dataset. But school districts usually only want to look at their own stuff and aren’t always cool with sharing their data with neighboring districts. So to meet these needs I need a way to split that analysis up and generate standardized reports for each district. Here’s how I do that!</p>
+<p>I use the <code>tidyverse</code> package. In this project in particular, I’ll be using <code>purrr</code> to iterate the plotting and writing functions for each school district.</p>
+<p>Since I can’t show you real school district data, I’ll use the <code>iris</code> dataset to illustrate the ideas.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="/post/2015-07-23-r-rmarkdown/"><i class="fa fa-chevron-circle-left"></i> Hello R Markdown</a>
+        </li>
+        
+        
+        <li>
+            <a href="/post/lfc-s-home-and-away-wins/">LFC’s Home and Away Wins <i class="fa fa-chevron-circle-right"></i> </a>
+        </li>
+        
+    </ul>
+</section>
+    
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2017 - Ryan Estrellado | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="/js/scripts.js"></script>
+</body>
+
+</html>

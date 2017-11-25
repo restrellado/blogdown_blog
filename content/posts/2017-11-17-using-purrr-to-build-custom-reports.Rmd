@@ -1,0 +1,108 @@
+---
+title: Using Purrr to Build Custom Reports
+author: Ryan Estrellado
+date: '2017-11-17'
+slug: using-purrr-to-build-custom-reports
+categories: []
+tags: []
+---
+
+```{r echo=FALSE}
+library(knitr)
+opts_chunk$set(message = F)
+```
+
+In this post I'm going to show you how I use `purrr` to generate custom CSVs and plots for clients. My day job involves analyzing data for school districts and generating reports and plots for each district. Public education data is often aggregated at the county or district level, so data from all the school districts and schools are contained in the same dataset. But school districts usually only want to look at their own stuff and aren't always cool with sharing their data with neighboring districts. So to meet these needs I need a way to split that analysis up and generate standardized reports for each district. 
+
+This is true any time you have a dataset of observations that are part of a larger group. The problem to solve comes when these larger groups are actual people who don't want to see the data of the other larger groups. Here are more examples: 
+
+- A list of students, their scores, and their schools needs to be split and analyzed by each school  
+- A list of schools, their average student score, and their school districts needs to be split and analyzed by each district 
+- A list of Speech and Language Pathologists, their caseload count, and their school districts needs to be split and analyzed by each district
+
+I should say up front that I'm using a made up dataset, so we won't learn anything meaningful from the data but I hope the fake dataset is useful to show a few things: 
+
+- Education workers can take aggregated datasets and make it meaningful to districts or schools  
+- This can be done in consistent and reproducible way using functional programming techniques  
+
+# Setting It All Up 
+
+I use the `tidyverse` package to do this work. In particular, I'll be using `purrr` to iterate the plotting and writing functions for each school district. 
+
+```{r}
+library(tidyverse)
+```
+
+Now we'll need to make the dataset. Let's imagine that we have fifteen schools, spread out equally over three school districts. Each district has both elementary and secondary schools. Each school has a single test score. Usually this kind of data has a student on each row, not a school. If it helps you imagine the example, you can pretend the `score` field is some summary score for that school. Think average statewide or local measure scores. 
+
+The idea here is that we're starting with a dataset that has some type of categorical variable and a bunch of related data for each of the categories. We want to be able to generate reports and plots for each of those categories separately so that each group has their own plot and spreadsheet. 
+
+```{r}
+scores <- tibble(
+  school = sample(c(letters[1:5]), 100, replace = T), 
+  district = sample(c("River Valley", "Stream Valley", "Pond Valley"), 100, replace = T), 
+  level = sample(c("Elementary", "Secondary"), 100, replace = T), 
+  score = sample(c(25:100), 100, replace = T)
+)
+
+kable(head(scores))
+```
+
+Notice here that if you are required to share analyze and report these data to Pond Valley District without showing them River Valley District's data, you've got a small problem. One way to get around this is to filter everything in Excel and then copy and paste. Not the worst solution, but it can be tedious if you've got many rows. Even worse if you're tasked with producing these reports regularly with new datasets. With functional programming techniques you can do a little more work up front but enjoy the consistency and speed of being able to do this over and over again with new datasets. 
+
+# Separate Spreadsheets 
+
+Now that the dataset is ready we'll start working on producing each district's CSV file. We'll start by summarizing the test scores for each school and then we'll split them up by district. The result is a list of three school district datasets. 
+
+```{r}
+scores2 <- scores %>% 
+  group_by(district, school) %>%
+  summarise(mean = round(mean(score)), median = round(median(score))) %>%
+  split(.$district)
+```
+
+Here's the one for Pond Valley: 
+
+```{r}
+kable(scores2[[1]])
+```
+
+Now that the dataset is split up, we need to write each dataset to a CSV, each with it's own filename. Here's where using a function comes in handy. Imagine that you want to write an email to ten people and the only thing that changes in each email is the person's name. One solution is to rewrite the entire email ten times. A better solution would be to use an email service that writes and sends the emails for you if you give it it the list of names to change in each email. We're doing a very similar thing when we  use functional programming to write our CSVs because we're asking R to run the same function three times but each time change the dataset and filename:
+
+```{r echo = F}
+kable(tibble(
+  Action = c("Write an email to a named recipient", "Write a CSV with a filename"), 
+  `What Changes` = c("The recipient's name", "The dataset and filename"), 
+  `Result` = c("Emails with custom recipients", "CSVs with custom filenames")
+))
+```
+
+we'll use the `pwalk` function from `purrr` to write each CSV. Instead of calling `write_csv` three times for each dataset, we're going to call it once but pass it a set of arguments for each dataset. We use `pwalk` instead of `pmap` because we're really only interested in the CSVs that are made. If we used `pmap` we'd get the CSVs but we'd also get a list of tibbles as output. 
+
+```{r}
+# Make a vector of file paths
+file_names <- paste0("~/Desktop/", names(scores2), ".csv")
+
+pwalk(list(x = scores2, path = file_names), write_csv)
+```
+
+```{r}
+scores3 <- scores %>% 
+  split(.$district) 
+
+plot_names <- paste0("~/Desktop/", names(scores3))
+
+# Make a vector of file paths
+plot_paths <- ("~/Desktop/")
+  
+make_plot <- function(data, district, path) {
+  ggplot(data = data, aes(school, score, fill = level)) + 
+    geom_boxplot() + 
+    labs(title = "Median Scores", 
+         subtitle = paste0("District: ", district))
+
+  ggsave(filename = paste0(district, " plot", ".png"), path = path, device = "png")
+}
+
+pwalk(list(data = scores3, district = names(scores3)), path = plot_paths, make_plot)
+```

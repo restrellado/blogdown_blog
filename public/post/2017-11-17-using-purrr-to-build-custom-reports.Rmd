@@ -1,0 +1,19 @@
+---
+title: Using Purrr to Build Custom Reports
+author: Ryan Estrellado
+date: '2017-11-17'
+slug: using-purrr-to-build-custom-reports
+categories: []
+tags: []
+---
+
+In this post I'm going to show you how I use `purrr` to generate custom reports and plots for clients. My day job involves analyzing data for school districts and generating reports and plots for each district. Public education data is often aggregated at the county level, so data from all the school districts are contained in the same dataset. But school districts usually only want to look at their own stuff and aren't always cool with sharing their data with neighboring districts. So to meet these needs I need a way to split that analysis up and generate standardized reports for each district. Here's how I do that! 
+
+I use the `tidyverse` package. In this project in particular, I'll be using `purrr` to iterate the plotting and writing functions for each school district. 
+
+Since I can't show you real school district data, I'll use the `iris` dataset to illustrate the ideas. 
+
+```{r}
+library(tidyverse)
+```
+

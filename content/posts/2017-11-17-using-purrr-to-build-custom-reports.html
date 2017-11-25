@@ -1,0 +1,186 @@
+---
+title: Using Purrr to Build Custom Reports
+author: Ryan Estrellado
+date: '2017-11-17'
+slug: using-purrr-to-build-custom-reports
+categories: []
+tags: []
+---
+
+
+
+<p>In this post I’m going to show you how I use <code>purrr</code> to generate custom CSVs and plots for clients. My day job involves analyzing data for school districts and generating reports and plots for each district. Public education data is often aggregated at the county or district level, so data from all the school districts and schools are contained in the same dataset. But school districts usually only want to look at their own stuff and aren’t always cool with sharing their data with neighboring districts. So to meet these needs I need a way to split that analysis up and generate standardized reports for each district.</p>
+<p>This is true any time you have a dataset of observations that are part of a larger group. The problem to solve comes when these larger groups are actual people who don’t want to see the data of the other larger groups. Here are more examples:</p>
+<ul>
+<li>A list of students, their scores, and their schools needs to be split and analyzed by each school<br />
+</li>
+<li>A list of schools, their average student score, and their school districts needs to be split and analyzed by each district</li>
+<li>A list of Speech and Language Pathologists, their caseload count, and their school districts needs to be split and analyzed by each district</li>
+</ul>
+<p>I should say up front that I’m using a made up dataset, so we won’t learn anything meaningful from the data but I hope the fake dataset is useful to show a few things:</p>
+<ul>
+<li>Education workers can take aggregated datasets and make it meaningful to districts or schools<br />
+</li>
+<li>This can be done in consistent and reproducible way using functional programming techniques</li>
+</ul>
+<div id="setting-it-all-up" class="section level1">
+<h1>Setting It All Up</h1>
+<p>I use the <code>tidyverse</code> package to do this work. In particular, I’ll be using <code>purrr</code> to iterate the plotting and writing functions for each school district.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<p>Now we’ll need to make the dataset. Let’s imagine that we have fifteen schools, spread out equally over three school districts. Each district has both elementary and secondary schools. Each school has a single test score. Usually this kind of data has a student on each row, not a school. If it helps you imagine the example, you can pretend the <code>score</code> field is some summary score for that school. Think average statewide or local measure scores.</p>
+<p>The idea here is that we’re starting with a dataset that has some type of categorical variable and a bunch of related data for each of the categories. We want to be able to generate reports and plots for each of those categories separately so that each group has their own plot and spreadsheet.</p>
+<pre class="r"><code>scores &lt;- tibble(
+  school = sample(c(letters[1:5]), 100, replace = T), 
+  district = sample(c(&quot;River Valley&quot;, &quot;Stream Valley&quot;, &quot;Pond Valley&quot;), 100, replace = T), 
+  level = sample(c(&quot;Elementary&quot;, &quot;Secondary&quot;), 100, replace = T), 
+  score = sample(c(25:100), 100, replace = T)
+)
+
+kable(head(scores))</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">school</th>
+<th align="left">district</th>
+<th align="left">level</th>
+<th align="right">score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">c</td>
+<td align="left">River Valley</td>
+<td align="left">Secondary</td>
+<td align="right">44</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">River Valley</td>
+<td align="left">Secondary</td>
+<td align="right">87</td>
+</tr>
+<tr class="odd">
+<td align="left">b</td>
+<td align="left">Stream Valley</td>
+<td align="left">Secondary</td>
+<td align="right">93</td>
+</tr>
+<tr class="even">
+<td align="left">c</td>
+<td align="left">River Valley</td>
+<td align="left">Elementary</td>
+<td align="right">26</td>
+</tr>
+<tr class="odd">
+<td align="left">d</td>
+<td align="left">Pond Valley</td>
+<td align="left">Elementary</td>
+<td align="right">62</td>
+</tr>
+<tr class="even">
+<td align="left">a</td>
+<td align="left">River Valley</td>
+<td align="left">Secondary</td>
+<td align="right">71</td>
+</tr>
+</tbody>
+</table>
+<p>Notice here that if you are required to share analyze and report these data to Pond Valley District without showing them River Valley District’s data, you’ve got a small problem. One way to get around this is to filter everything in Excel and then copy and paste. Not the worst solution, but it can be tedious if you’ve got many rows. Even worse if you’re tasked with producing these reports regularly with new datasets. With functional programming techniques you can do a little more work up front but enjoy the consistency and speed of being able to do this over and over again with new datasets.</p>
+</div>
+<div id="separate-spreadsheets" class="section level1">
+<h1>Separate Spreadsheets</h1>
+<p>Now that the dataset is ready we’ll start working on producing each district’s CSV file. We’ll start by summarizing the test scores for each school and then we’ll split them up by district. The result is a list of three school district datasets.</p>
+<pre class="r"><code>scores2 &lt;- scores %&gt;% 
+  group_by(district, school) %&gt;%
+  summarise(mean = round(mean(score)), median = round(median(score))) %&gt;%
+  split(.$district)</code></pre>
+<p>Here’s the one for Pond Valley:</p>
+<pre class="r"><code>kable(scores2[[1]])</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left">district</th>
+<th align="left">school</th>
+<th align="right">mean</th>
+<th align="right">median</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Pond Valley</td>
+<td align="left">a</td>
+<td align="right">65</td>
+<td align="right">76</td>
+</tr>
+<tr class="even">
+<td align="left">Pond Valley</td>
+<td align="left">b</td>
+<td align="right">62</td>
+<td align="right">73</td>
+</tr>
+<tr class="odd">
+<td align="left">Pond Valley</td>
+<td align="left">c</td>
+<td align="right">50</td>
+<td align="right">50</td>
+</tr>
+<tr class="even">
+<td align="left">Pond Valley</td>
+<td align="left">d</td>
+<td align="right">60</td>
+<td align="right">63</td>
+</tr>
+<tr class="odd">
+<td align="left">Pond Valley</td>
+<td align="left">e</td>
+<td align="right">63</td>
+<td align="right">76</td>
+</tr>
+</tbody>
+</table>
+<p>Now that the dataset is split up, we need to write each dataset to a CSV, each with it’s own filename. Here’s where using a function comes in handy. Imagine that you want to write an email to ten people and the only thing that changes in each email is the person’s name. One solution is to rewrite the entire email ten times. A better solution would be to use an email service that writes and sends the emails for you if you give it it the list of names to change in each email. We’re doing a very similar thing when we use functional programming to write our CSVs because we’re asking R to run the same function three times but each time change the dataset and filename:</p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Action</th>
+<th align="left">What Changes</th>
+<th align="left">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Write an email to a named recipient</td>
+<td align="left">The recipient’s name</td>
+<td align="left">Emails with custom recipients</td>
+</tr>
+<tr class="even">
+<td align="left">Write a CSV with a filename</td>
+<td align="left">The dataset and filename</td>
+<td align="left">CSVs with custom filenames</td>
+</tr>
+</tbody>
+</table>
+<p>we’ll use the <code>pwalk</code> function from <code>purrr</code> to write each CSV. Instead of calling <code>write_csv</code> three times for each dataset, we’re going to call it once but pass it a set of arguments for each dataset. We use <code>pwalk</code> instead of <code>pmap</code> because we’re really only interested in the CSVs that are made. If we used <code>pmap</code> we’d get the CSVs but we’d also get a list of tibbles as output.</p>
+<pre class="r"><code># Make a vector of file paths
+file_names &lt;- paste0(&quot;~/Desktop/&quot;, names(scores2), &quot;.csv&quot;)
+
+pwalk(list(x = scores2, path = file_names), write_csv)</code></pre>
+<pre class="r"><code>scores3 &lt;- scores %&gt;% 
+  split(.$district) 
+
+plot_names &lt;- paste0(&quot;~/Desktop/&quot;, names(scores3))
+
+# Make a vector of file paths
+plot_paths &lt;- (&quot;~/Desktop/&quot;)
+  
+make_plot &lt;- function(data, district, path) {
+  ggplot(data = data, aes(school, score, fill = level)) + 
+    geom_boxplot() + 
+    labs(title = &quot;Median Scores&quot;, 
+         subtitle = paste0(&quot;District: &quot;, district))
+
+  ggsave(filename = paste0(district, &quot; plot&quot;, &quot;.png&quot;), path = path, device = &quot;png&quot;)
+}
+
+pwalk(list(data = scores3, district = names(scores3)), path = plot_paths, make_plot)</code></pre>
+</div>

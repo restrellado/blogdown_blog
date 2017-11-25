@@ -1,0 +1,234 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>My Blog</title>
+    <meta name="description" content="The HTML5 Herald">
+    <meta name="author" content="">
+    <meta name="generator" content="Hugo 0.30.2" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
+</head>
+
+<body>
+    <div id="container">
+        <header>
+            <h1>
+                <a href="/">My Blog</a>
+            </h1>
+
+            <ul id="social-media">
+                
+        
+                
+        
+                
+        
+                
+        
+                
+        
+                
+            </ul>
+            
+            <p><em>A Hugo theme for creative and technical writing</em></p>
+            
+        </header>
+
+        
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About Hugo</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+        
+        <main>
+
+
+
+<article>
+
+    <h1>LFC’s Home and Away Wins</h1>
+
+    
+        <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2017-11-23T00:00:00Z">
+                Nov 23nd, 2017
+            </time>
+        </li>
+        
+        
+
+        
+
+        <li>3 min read</li>
+    </ul>
+</aside>
+    
+
+    <pre class="r"><code>#install.packages(&quot;engsoccerdata&quot;)
+library(engsoccerdata)
+library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+## ✔ tibble  1.3.4     ✔ dplyr   0.7.4
+## ✔ tidyr   0.7.2     ✔ stringr 1.2.0
+## ✔ readr   1.1.1     ✔ forcats 0.2.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(lubridate)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;lubridate&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     date</code></pre>
+<pre class="r"><code>library(stringr)
+library(rvest)</code></pre>
+<pre><code>## Loading required package: xml2</code></pre>
+<pre><code>## 
+## Attaching package: &#39;rvest&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:purrr&#39;:
+## 
+##     pluck</code></pre>
+<pre><code>## The following object is masked from &#39;package:readr&#39;:
+## 
+##     guess_encoding</code></pre>
+<p>The managers and the years they managed Liverpool FC are scraped from the <a href="https://en.wikipedia.org/wiki/List_of_Liverpool_F.C._managers">Wikipedia page for LFC managers</a>.</p>
+<pre class="r"><code>site &lt;- read_html(
+  &quot;https://en.wikipedia.org/wiki/List_of_Liverpool_F.C._managers&quot;
+  )
+
+mtable &lt;- site %&gt;%
+  html_nodes(&quot;table&quot;) %&gt;%
+  .[[3]] %&gt;%
+  html_table(fill = T) %&gt;%
+  as_tibble()</code></pre>
+<pre class="r"><code># Clean up fields
+mngrs_clean &lt;- mtable %&gt;%
+  # The first row are field names
+  filter(row_number() != 1) %&gt;% 
+  # Clean up the manager names
+  mutate(Name = str_replace(Name, &quot;\\,.*&quot;, &quot;&quot;), 
+         # Fix the name for the Evans and Houllier era
+         Name = ifelse(Name == &quot;Evans&quot; &amp; Nationality != &quot;England&quot;, 
+                       &quot;Evans &amp; Houllier&quot;, 
+                       Name)) %&gt;% 
+  # Remove zeros and strange characters
+  mutate_at(c(&quot;From&quot;, &quot;To&quot;), funs(str_sub(., 9, 18))) %&gt;% 
+  select(From, To, Name)
+
+# Convert classes
+mngrs_clean &lt;- mngrs_clean %&gt;%
+  mutate_at(vars(From:To), funs(ymd)) %&gt;% 
+  # Use today&#39;s date in the latest manager&#39;s &quot;To&quot; field 
+  mutate(To = if_else(row_number() == nrow(mngrs_clean), Sys.Date(), To))</code></pre>
+<pre><code>## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &#39;default/America/
+## Los_Angeles&#39;</code></pre>
+<pre class="r"><code># Subset Liverpool home and away games
+lfc &lt;- as.tibble(england) %&gt;%
+  mutate(Date = ymd(Date)) %&gt;% 
+  mutate_at(vars(home:FT, result), funs(as.character)) %&gt;%
+  mutate_at(vars(hgoal:goaldif), funs(as.numeric)) %&gt;%
+  filter(home == &quot;Liverpool&quot; | visitor == &quot;Liverpool&quot;) %&gt;% 
+  # Create a new column for managers 
+  mutate(mngr = &quot;&quot;) %&gt;%
+  arrange(Date)</code></pre>
+<pre class="r"><code># TODO: Can we do this as a function by creating a vector of manager names?
+# TODO: Deal with rows that have no manager
+for (i in 1:nrow(mngrs_clean)) {
+ lfc &lt;- lfc %&gt;% 
+  mutate(mngr = ifelse(Date &gt;= mngrs_clean$From[i] &amp; Date &lt;= mngrs_clean$To[i], 
+    mngrs_clean$Name[i], 
+    mngr))
+}</code></pre>
+<pre class="r"><code># New goals column and at Anfield column
+lfc &lt;- lfc %&gt;% 
+  mutate(lfc_goals = 0, 
+         lfc_goals = ifelse(home == &quot;Liverpool&quot;, hgoal, vgoal), 
+         at_anf = &quot;&quot;, 
+         at_anf = ifelse(home == &quot;Liverpool&quot;, &quot;Anfield&quot;, &quot;Away&quot;))</code></pre>
+<div id="comparing-win-ratios" class="section level2">
+<h2>Comparing Win Ratios</h2>
+<pre class="r"><code>win_ratios &lt;- lfc %&gt;% 
+  mutate(win = 0,
+         win = ifelse(home == &quot;Liverpool&quot; &amp; result == &quot;H&quot;, 1, win), 
+         win = ifelse(visitor == &quot;Liverpool&quot; &amp; result == &quot;A&quot;, 1, win)) %&gt;% 
+  select(mngr, at_anf, win) %&gt;% 
+  group_by(mngr) %&gt;% 
+  summarise(total_hwins = sum(at_anf == &quot;Anfield&quot; &amp; win == 1), 
+            total_hgames = sum(at_anf == &quot;Anfield&quot;), 
+            total_awins = sum(at_anf != &quot;Anfield&quot; &amp; win == 1), 
+            total_agames = sum(at_anf != &quot;Anfield&quot;)) %&gt;% 
+  ungroup() %&gt;% 
+  mutate(h_odds = (total_hwins / total_hgames) / (1 - total_hwins / total_hgames), 
+         a_odds = (total_awins / total_agames) / (1 - total_awins / total_agames), 
+         log_odds_ratio = log2(h_odds / a_odds)) %&gt;% 
+  filter(total_hgames + total_agames &gt;= 30)</code></pre>
+<pre class="r"><code>ggplot(data = win_ratios, aes(x = reorder(mngr, log_odds_ratio), 
+                              y = log_odds_ratio, 
+                              color = log_odds_ratio &lt; 0)) + 
+  geom_point(aes(size = total_hgames + total_agames), 
+             alpha = .9) + 
+  geom_segment(aes(x = mngr, xend = mngr, y = 0, yend = log_odds_ratio), 
+               size = 1) +
+  coord_flip() + 
+  scale_color_discrete(name = &quot;&quot;, labels = c(&quot;More home wins&quot;, &quot;More away wins&quot;)) +
+  scale_y_continuous(breaks = seq(-3, 3), 
+                     limits = c(-1, 3),
+                     labels = c(&quot;.125x&quot;, &quot;.25&quot;, &quot;.5x&quot;, &quot;same&quot;, &quot;2x more&quot;, &quot;4x&quot;, &quot;8x&quot;)) +
+  labs(title = &quot;Klopp Wins More Away Games But Time Will Tell&quot;, 
+       subtitle = &quot;Top Flight League Games 1893 - 2016&quot;, 
+       x = &quot;&quot;, y = &quot;Liverpool Home Wins Odds vs. Away Wins Odds&quot;, size = &quot;Total Games&quot;)</code></pre>
+<p><img src="/post/2017-11-23-lfc-s-home-and-away-wins_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="/post/using-purrr-to-build-custom-reports/"><i class="fa fa-chevron-circle-left"></i> Using Purrr to Build Custom Reports</a>
+        </li>
+        
+        
+    </ul>
+</section>
+    
+
+
+
+
+</main>
+    <footer>
+        <h6>Copyright &copy; 2017 - Ryan Estrellado | 
+            Rendered by <a href="https://gohugo.io" title="Hugo">Hugo</a> |
+            <a href="/index.xml">Subscribe</a></h6>
+    </footer>
+</div>
+<script src="/js/scripts.js"></script>
+</body>
+
+</html>

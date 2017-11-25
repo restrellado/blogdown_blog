@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>My Blog</title>
+    <link>/</link>
+    <description>Recent content on My Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <copyright>Copyright &amp;copy; 2017 - Ryan Estrellado</copyright>
+    <lastBuildDate>Wed, 09 Apr 2014 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About Hugo</title>
+      <link>/about/</link>
+      <pubDate>Wed, 09 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>Hugo is a static site engine written in Go.
+It makes use of a variety of open source projects including:
+ Cobra Viper J Walter Weatherman Cast  Learn more and contribute on GitHub.</description>
+    </item>
+    
+    <item>
+      <title>LFC’s Home and Away Wins</title>
+      <link>/posts/lfc-s-home-and-away-wins/</link>
+      <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/lfc-s-home-and-away-wins/</guid>
+      <description>#install_github(&amp;quot;jalapic/engsoccerdata&amp;quot;) library(engsoccerdata) library(tidyverse) ## ── Attaching packages ──────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ── ## ✔ ggplot2 2.2.1 ✔ purrr 0.2.4 ## ✔ tibble 1.3.4 ✔ dplyr 0.7.4 ## ✔ tidyr 0.7.2 ✔ stringr 1.</description>
+    </item>
+    
+    <item>
+      <title>Using Purrr to Build Custom Reports</title>
+      <link>/posts/using-purrr-to-build-custom-reports/</link>
+      <pubDate>Fri, 17 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/using-purrr-to-build-custom-reports/</guid>
+      <description>In this post I’m going to show you how I use purrr to generate custom CSVs and plots for clients. My day job involves analyzing data for school districts and generating reports and plots for each district.</description>
+    </item>
+    
+    <item>
+      <title>Style Guide</title>
+      <link>/posts/style-guide/</link>
+      <pubDate>Tue, 14 Nov 2017 10:57:55 -0500</pubDate>
+      
+      <guid>/posts/style-guide/</guid>
+      <description>Headings Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 Headings with Text Heading 1 Lorem ipsum dolor sit amet, adipiscing elit. Nullam dignissim convallis est. Quisque aliquam.</description>
+    </item>
+    
+    <item>
+      <title>Image Style Guide</title>
+      <link>/posts/image-content/</link>
+      <pubDate>Tue, 14 Nov 2017 08:08:17 -0500</pubDate>
+      
+      <guid>/posts/image-content/</guid>
+      <description>Veniam est eu adipisicing reprehenderit do sit sint elit sint. Tempor laborum ut dolore aliqua. Commodo eu qui sint magna veniam laborum. Ad cupidatat do proident ex veniam amet Lorem. Officia laboris aute fugiat id consequat culpa ullamco labore ea amet ad.</description>
+    </item>
+    
+    <item>
+      <title>Hello R Markdown</title>
+      <link>/post/2015-07-23-r-rmarkdown/</link>
+      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      
+      <guid>/post/2015-07-23-r-rmarkdown/</guid>
+      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.</description>
+    </item>
+    
+    <item>
+      <title>Creating a New Theme</title>
+      <link>/posts/creating-a-new-theme/</link>
+      <pubDate>Sun, 28 Sep 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/creating-a-new-theme/</guid>
+      <description>Introduction This tutorial will show you how to create a simple theme in Hugo. I assume that you are familiar with HTML, the bash command line, and that you are comfortable using Markdown to format content.</description>
+    </item>
+    
+    <item>
+      <title>(Hu)go Template Primer</title>
+      <link>/posts/goisforlovers/</link>
+      <pubDate>Wed, 02 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/goisforlovers/</guid>
+      <description>Hugo uses the excellent go html/template library for its template engine. It is an extremely lightweight engine that provides a very small amount of logic. In our experience that it is just the right amount of logic to be able to create a good static website.</description>
+    </item>
+    
+    <item>
+      <title>Getting Started with Hugo</title>
+      <link>/posts/hugoisforlovers/</link>
+      <pubDate>Wed, 02 Apr 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/hugoisforlovers/</guid>
+      <description>Step 1. Install Hugo Goto hugo releases and download the appropriate version for your os and architecture.
+Save it somewhere specific as we will be using it in the next step.</description>
+    </item>
+    
+    <item>
+      <title>Migrate to Hugo from Jekyll</title>
+      <link>/posts/migrate-from-jekyll/</link>
+      <pubDate>Mon, 10 Mar 2014 00:00:00 +0000</pubDate>
+      
+      <guid>/posts/migrate-from-jekyll/</guid>
+      <description>Move static content to static Jekyll has a rule that any directory not starting with _ will be copied as-is to the _site output. Hugo keeps all static content under static.</description>
+    </item>
+    
+  </channel>
+</rss>
