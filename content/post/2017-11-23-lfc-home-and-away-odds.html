@@ -2,7 +2,7 @@
 title: LFC’s Home and Away Wins
 author: Ryan Estrellado
 date: '2017-11-23'
-slug: lfc-s-home-and-away-wins
+slug: lfc-home-and-away-odds
 categories: []
 tags: []
 ---
@@ -76,7 +76,7 @@ lfc &lt;- as.tibble(england) %&gt;%
   mutate(mngr = &quot;&quot;) %&gt;% 
   select(Date, home, visitor, FT, result, at_anf, mngr) %&gt;% 
   arrange(Date)</code></pre>
-<p>And finally, this loop adds a manager to each Liverpool game based on the date of the game. <em>Side note: If anyone can help me convert this loop to a function, feel free to do a pull request at my GitHub page. I only have a few hairs left to pull out from when I last tried to do it.</em></p>
+<p>And finally, this loop adds a manager to each Liverpool game based on the date of the game. <em>Side note: If anyone can help me convert this loop to a function, feel free to do a pull request <a href="https://github.com/restrellado/liverpoolfc">at my GitHub page</a>. I only have a few hairs left to pull out from when I last tried to do it.</em></p>
 <pre class="r"><code>for (i in 1:nrow(mngrs_clean)) {
  lfc &lt;- lfc %&gt;% 
   mutate(mngr = ifelse(Date &gt;= mngrs_clean$From[i] &amp; Date &lt;= mngrs_clean$To[i], 
@@ -307,7 +307,7 @@ kable(win_ratios, caption = &quot;Home Win Odds to Away Win Odds&quot;, align = 
   labs(title = &quot;Klopp Has the Lowest Home to Away Wins Ratio \n(But Time Will Tell)&quot;, 
        subtitle = &quot;Top Flight League Games 1893 - 2017&quot;, 
        x = &quot;&quot;, y = &quot;Home Win Odds to Away Win Odds&quot;, size = &quot;Total Games&quot;)</code></pre>
-<p><img src="/post/2017-11-23-lfc-s-home-and-away-wins_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p><img src="/post/2017-11-23-lfc-home-and-away-odds_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>The number of games managed probably makes a difference here, as you’d expect a wider range of results from lower sample sizes. Taylor and Souness are managers that had home win odds approaching eight times their away win odds and each managed less than 200 games:</p>
 <pre class="r"><code># Paramaters for Taylor&#39;s point
 taylor &lt;- list(win_ratios$total_games[min_rank(desc(win_ratios$odds_ratio)) == 1], 
@@ -343,7 +343,7 @@ ggplot(data = win_ratios, aes(x = total_games, y = odds_ratio)) +
        subtitle = &quot;Top Flight League Games 1893 - 2017&quot;, 
        x = &quot;Games Managed&quot;, 
        y = &quot;Home Wins to Away Wins Odds Ratio&quot;)</code></pre>
-<p><img src="/post/2017-11-23-lfc-s-home-and-away-wins_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="/post/2017-11-23-lfc-home-and-away-odds_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 <p>Just eyeballing the plot, it looks like the variation in odds ratio tightens up a bit after about 200 games. After 200 games, the highest ratio goes to the great Bill Shankly at a ratio of 4.71 over 611 games and the lowest ratio goes to Gerard Houllier at 1.89 over 228 games.</p>
 <pre class="r"><code>kable(
  win_ratios %&gt;% 

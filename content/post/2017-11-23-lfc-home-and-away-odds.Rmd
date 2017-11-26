@@ -2,7 +2,7 @@
 title: LFC’s Home and Away Wins
 author: Ryan Estrellado
 date: '2017-11-23'
-slug: lfc-s-home-and-away-wins
+slug: lfc-home-and-away-odds
 categories: []
 tags: []
 ---
@@ -89,7 +89,7 @@ lfc <- as.tibble(england) %>%
   arrange(Date)
 ```
 
-And finally, this loop adds a manager to each Liverpool game based on the date of the game. *Side note: If anyone can help me convert this loop to a function, feel free to do a pull request at my GitHub page. I only have a few hairs left to pull out from when I last tried to do it.*  
+And finally, this loop adds a manager to each Liverpool game based on the date of the game. *Side note: If anyone can help me convert this loop to a function, feel free to do a pull request [at my GitHub page](https://github.com/restrellado/liverpoolfc). I only have a few hairs left to pull out from when I last tried to do it.*  
 
 ```{r}
 for (i in 1:nrow(mngrs_clean)) {
