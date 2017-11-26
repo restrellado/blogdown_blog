@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Golang on My Blog</title>
+    <title>Golang on Ryan Estrellado</title>
     <link>/tags/golang/</link>
-    <description>Recent content in Golang on My Blog</description>
+    <description>Recent content in Golang on Ryan Estrellado</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright &amp;copy; 2017 - Ryan Estrellado</copyright>
     <lastBuildDate>Wed, 02 Apr 2014 00:00:00 +0000</lastBuildDate>

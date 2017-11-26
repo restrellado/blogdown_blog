@@ -1,23 +1,32 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on My Blog</title>
+    <title>Posts on Ryan Estrellado</title>
     <link>/post/</link>
-    <description>Recent content in Posts on My Blog</description>
+    <description>Recent content in Posts on Ryan Estrellado</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright &amp;copy; 2017 - Ryan Estrellado</copyright>
-    <lastBuildDate>Thu, 23 Jul 2015 21:13:14 -0500</lastBuildDate>
+    <lastBuildDate>Thu, 23 Nov 2017 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Hello R Markdown</title>
-      <link>/post/2015-07-23-r-rmarkdown/</link>
-      <pubDate>Thu, 23 Jul 2015 21:13:14 -0500</pubDate>
+      <title>LFC’s Home and Away Wins</title>
+      <link>/post/lfc-s-home-and-away-wins/</link>
+      <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/2015-07-23-r-rmarkdown/</guid>
-      <description>R Markdown This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see http://rmarkdown.</description>
+      <guid>/post/lfc-s-home-and-away-wins/</guid>
+      <description>Anfield in Liverpool is one of the legendary stadiums of English football. Fortress Anfield has been the home to many historic games, including Liverpool’s 4-3 win against Newcastle in 1996 and my personal favorite, Liverpool’s 3-1 win against Olympiacos to go through to the Champions League’s last 16.</description>
+    </item>
+    
+    <item>
+      <title>Using Purrr to Build Custom Reports</title>
+      <link>/post/using-purrr-to-build-custom-reports/</link>
+      <pubDate>Fri, 17 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/using-purrr-to-build-custom-reports/</guid>
+      <description>In this post I’m going to show you how I use purrr to generate custom CSVs and plots for clients. My day job involves analyzing data for school districts and generating reports and plots for each district.</description>
     </item>
     
   </channel>

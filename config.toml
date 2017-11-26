@@ -1,5 +1,5 @@
 baseurl = "/"
-title = "My Blog"
+title = "Ryan Estrellado"
 copyright = "Copyright &copy; 2017 - Ryan Estrellado"
 canonifyurls = true
 theme = "hugo-kiera"
@@ -11,8 +11,8 @@ enableEmoji = true
 pygmentsCodeFences = true
 
 [author]
-    name = ""
-    github = ""
+    name = "Ryan Estrellado"
+    github = "restrellado"
     gitlab = ""
     linkedin = ""
     facebook = ""
@@ -20,6 +20,6 @@ pygmentsCodeFences = true
     instagram = ""
 
 [params]
-    tagline = "A Hugo theme for creative and technical writing"
+    tagline = "I work in public education and love data science."
 
 
