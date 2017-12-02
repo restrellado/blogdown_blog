@@ -20,6 +20,9 @@ pygmentsCodeFences = true
     instagram = "" 
 
 [params]
-    tagline = "I work in public education and love data science."
+    tagline = "I work in public education and love data science." 
+
+[permalinks]
+  post = "/:year/:month/:slug/"
 
 
