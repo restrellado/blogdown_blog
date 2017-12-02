@@ -17,7 +17,7 @@ pygmentsCodeFences = true
     linkedin = "ryanestrellado"
     facebook = ""
     twitter = "ryanes"
-    instagram = ""
+    instagram = "" 
 
 [params]
     tagline = "I work in public education and love data science."
