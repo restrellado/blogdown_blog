@@ -1,0 +1,239 @@
+---
+title: "Follow-Up: Comparing the Home and Away Wins of Kenny Dalglish’s Managerial
+  Runs"
+author: Ryan Estrellado
+date: '2017-11-28'
+slug: king-kenny-comparison
+categories: []
+tags: []
+draft: true
+---
+
+```{r echo=FALSE}
+blogdown::shortcode("tweet", "935230903177097216")
+```
+
+```{r load packages, warning=FALSE, message=FALSE}
+#install_github("jalapic/engsoccerdata")
+library(engsoccerdata)
+library(tidyverse)
+library(lubridate)
+library(stringr)
+library(rvest) 
+library(knitr)
+```
+
+```{r scrape manager data, echo=FALSE}
+site <- read_html(
+  "https://en.wikipedia.org/wiki/List_of_Liverpool_F.C._managers"
+  )
+
+mtable <- site %>%
+  html_nodes("table") %>%
+  .[[3]] %>%
+  html_table(fill = T) %>%
+  as_tibble()
+```
+
+```{r echo=FALSE}
+# Clean up fields
+mngrs_clean <- mtable %>%
+  # The first row are field names
+  filter(row_number() != 1) %>% 
+  # Clean up the manager names
+  mutate(Name = str_replace(Name, "\\,.*", ""), 
+         # Fix the name for the Evans and Houllier era
+         Name = ifelse(Name == "Evans" & Nationality != "England", 
+                       "Evans & Houllier", 
+                       Name)) %>% 
+  # Remove zeros and strange characters
+  mutate_at(c("From", "To"), funs(str_sub(., 9, 18))) %>% 
+  select(From, To, Name)
+
+# Convert classes
+mngrs_clean <- mngrs_clean %>%
+  mutate_at(vars(From:To), funs(ymd)) %>% 
+  # Fix the Houllier and Evans dates 
+  mutate(To = if_else(Name == "Evans", ymd(19980715), To),
+         From = if_else(Name == "Houllier", ymd(19981113), From), 
+         To = if_else(row_number() == nrow(mngrs_clean), Sys.Date(), To)) %>%
+  # Use today's date in the latest manager's "To" field 
+  mutate(date_int = interval(From, To)) 
+```
+
+```{r create lfc tibble, warning=FALSE, message=FALSE, echo=FALSE}
+# Current season
+england_17 <- england_current(Season = 2017) 
+
+# Add current season to england dataset
+england <- rbind(england, england_17) 
+
+# Subset Liverpool home and away games
+lfc <- as.tibble(england) %>%
+  mutate(Date = ymd(Date)) %>% 
+  mutate_at(vars(home:FT, result), funs(as.character)) %>%
+  mutate_at(vars(hgoal:goaldif), funs(as.numeric)) %>%
+  filter(home == "Liverpool" | visitor == "Liverpool") %>% 
+  # Create a column for Anfield games
+  mutate(at_anf = "", 
+         at_anf = ifelse(home == "Liverpool", "Anfield", "Away")) %>%
+  # Create a new column for managers 
+  mutate(mngr = "") %>% 
+  select(Date, home, visitor, FT, result, at_anf, hgoal, vgoal, goaldif, mngr) %>% 
+  arrange(Date)
+```
+
+```{r echo=FALSE}
+# Add manager names
+walk(
+  1:nrow(mngrs_clean), 
+  ~(lfc$mngr[lfc$Date %within% mngrs_clean$date_int[.x]] <<- mngrs_clean$Name[.x])
+  )
+```
+
+```{r}
+dalglish <- lfc %>% 
+  # Add a column for wins
+  mutate(win = 0,
+         win = ifelse(home == "Liverpool" & result == "H", 1, win), 
+         win = ifelse(visitor == "Liverpool" & result == "A", 1, win), 
+         res = "", 
+         res = ifelse(home == "Liverpool" & result == "H", 2, res), 
+         res = ifelse(visitor == "Liverpool" & result == "A", 2, res), 
+         res = ifelse(home == "Liverpool" & result == "A", 0, res), 
+         res = ifelse(visitor == "Liverpool" & result == "H", 0, res), 
+         res = ifelse(result == "D", 1, res)) %>% 
+  select(Date, mngr, at_anf, win, res, hgoal, vgoal, goaldif) %>% 
+  filter(mngr == "Dalglish") %>% 
+  mutate(run = "", 
+         run = ifelse(Date >= ymd(19850817) & Date <= ymd(19910209), 
+                      "first", 
+                      "second")) 
+```
+
+```{r}
+dalglish_odds <- dalglish %>% 
+  # Add a column for wins
+  group_by(mngr, run) %>% 
+  # Add columns for home and away win totals and total games
+  summarise(total_hwins = sum(at_anf == "Anfield" & win == 1), 
+            total_hgames = sum(at_anf == "Anfield"), 
+            total_awins = sum(at_anf != "Anfield" & win == 1), 
+            total_agames = sum(at_anf != "Anfield"), 
+            total_games = total_hgames + total_agames) %>% 
+  ungroup() %>% 
+  # Calculate the the odds ratios
+  mutate(h_odds = (total_hwins / total_hgames) / (1 - total_hwins / total_hgames), 
+         a_odds = (total_awins / total_agames) / (1 - total_awins / total_agames), 
+         odds_ratio = round(h_odds / a_odds, 2)) %>% 
+  select(mngr, run, total_games, odds_ratio) 
+
+kable(dalglish_odds, caption = "Dalglish's Home and Away Wins Odds Ratio")
+```
+
+```{r}
+odds_ratio <- function(h, tot_h, a, tot_a) {
+  # Calculates odd ratios 
+  # 
+  # Args 
+  #   h: home wins 
+  #   tot_h: total home games 
+  #   a: away wins 
+  #   tot_a: total away games 
+  ((h/tot_h) / (1 - h/tot_a)) / ((a/tot_a) / (1 - a/tot_a))
+}
+
+running_odds <- dalglish %>% 
+  group_by(run) %>%
+  mutate(run_hwin = ifelse(at_anf == "Anfield" & win == 1, 1, 0), 
+         run_hwin = cumsum(run_hwin), 
+         run_hgames = ifelse(at_anf == "Anfield", 1, 0), 
+         run_hgames = cumsum(run_hgames), 
+         run_awin = ifelse(at_anf == "Away" & win == 1, 1, 0), 
+         run_awin = cumsum(run_awin), 
+         run_agames = ifelse(at_anf == "Away", 1, 0), 
+         run_agames = cumsum(run_agames), 
+         run_odds_ratio = odds_ratio(
+           run_hwin, run_hgames, run_awin, run_agames
+           )) %>% 
+  ungroup() %>%
+  split(.$run) %>% 
+  # Number the games of each run
+  map(~mutate(., game = seq(1:nrow(.)))) %>% 
+  bind_rows() %>% 
+  # Remove NaNs caused by 0 home and away games played
+  filter(!is.nan(run_odds_ratio))
+```
+
+```{r}
+# Parameters for annotate
+first <- running_odds %>% 
+  filter(run == "first") %>%
+  filter(row_number() == nrow(.))
+
+second <- running_odds %>% 
+  filter(run == "second") %>% 
+  filter(row_number() == nrow(.))
+
+ggplot(data = running_odds, aes(x = game, y = run_odds_ratio, color = run)) + 
+  geom_line(size = .75, alpha = .5) + 
+  scale_color_manual(values = c("red", "purple"), 
+                     label = c("1985-1991", "2011-2012")) +
+  annotate("text", 
+           x = nrow(filter(running_odds, run == "first")), 
+           y = 0,  
+           label = first$run_odds_ratio, 
+           color = "red", 
+           size = 5) +
+  annotate("text", 
+           x = nrow(filter(running_odds, run == "second")), 
+           y = -2,  
+           label = second$run_odds_ratio, 
+           color = "purple", 
+           size = 5) +
+  labs(title = "Home/Away Win Odds Ratio Stabilized With More Games",
+       subtitle = "Dalglish's Running Odds Ratio", 
+       x = "Number of Games", 
+       y = "Odds Ratio", 
+       color = "")
+```
+
+```{r}
+wins <- lfc %>% 
+  # Add a column for wins
+  mutate(win = 0,
+         win = ifelse(home == "Liverpool" & result == "H", 1, win), 
+         win = ifelse(visitor == "Liverpool" & result == "A", 1, win)) %>% 
+  select(mngr, at_anf, win) %>% 
+  group_by(mngr) %>% 
+  # Add columns for home and away win totals and total games
+  summarise(total_hwins = sum(at_anf == "Anfield" & win == 1), 
+            total_hgames = sum(at_anf == "Anfield"), 
+            total_awins = sum(at_anf != "Anfield" & win == 1), 
+            total_agames = sum(at_anf != "Anfield"), 
+            total_games = total_hgames + total_agames, 
+            win_perc = 100 * ((total_hwins + total_awins) / total_games)) %>% 
+  ungroup() %>% 
+  # Calculate the the odds ratios
+  mutate(h_odds = (total_hwins / total_hgames) / (1 - total_hwins / total_hgames), 
+         a_odds = (total_awins / total_agames) / (1 - total_awins / total_agames), 
+         odds_ratio = round(h_odds / a_odds, 2)) %>% 
+  select(mngr, total_games, odds_ratio, win_perc) %>%
+  filter(total_games >= 30) %>% 
+  arrange(desc(win_perc)) 
+
+kable(head(wins, n = 5), caption = "Top Five Win Percentages")
+```
+
+```{r}
+top_5 <- head(wins, n = 5)
+
+ggplot(data = wins, aes(x = odds_ratio, y = win_perc)) +
+  geom_point(aes(size = total_games), alpha = .5) + 
+  geom_point(data = top_5, color = "red", aes(size = total_games)) +
+  geom_text(data = wins, aes(label = mngr), nudge_x = .6, check_overlap = T) + 
+  labs(title = "Home/Away Win Odds Ratio Varies Across Win Percentages", 
+       subtitle = "LFC Top Flight League Games 1893 - 2017", 
+       x = "home/away win odds ratio", 
+       y = "win percentage")
+```

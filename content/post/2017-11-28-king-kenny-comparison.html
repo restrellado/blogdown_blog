@@ -1,0 +1,222 @@
+---
+title: "Follow-Up: Comparing the Home and Away Wins of Kenny Dalglish’s Managerial
+  Runs"
+author: Ryan Estrellado
+date: '2017-11-28'
+slug: king-kenny-comparison
+categories: []
+tags: []
+draft: true
+---
+
+
+
+{{% tweet "935230903177097216" %}}
+<pre class="r"><code>#install_github(&quot;jalapic/engsoccerdata&quot;)
+library(engsoccerdata)
+library(tidyverse)
+library(lubridate)
+library(stringr)
+library(rvest) 
+library(knitr)</code></pre>
+<pre><code>## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &#39;default/America/
+## Los_Angeles&#39;</code></pre>
+<pre class="r"><code>dalglish &lt;- lfc %&gt;% 
+  # Add a column for wins
+  mutate(win = 0,
+         win = ifelse(home == &quot;Liverpool&quot; &amp; result == &quot;H&quot;, 1, win), 
+         win = ifelse(visitor == &quot;Liverpool&quot; &amp; result == &quot;A&quot;, 1, win), 
+         res = &quot;&quot;, 
+         res = ifelse(home == &quot;Liverpool&quot; &amp; result == &quot;H&quot;, 2, res), 
+         res = ifelse(visitor == &quot;Liverpool&quot; &amp; result == &quot;A&quot;, 2, res), 
+         res = ifelse(home == &quot;Liverpool&quot; &amp; result == &quot;A&quot;, 0, res), 
+         res = ifelse(visitor == &quot;Liverpool&quot; &amp; result == &quot;H&quot;, 0, res), 
+         res = ifelse(result == &quot;D&quot;, 1, res)) %&gt;% 
+  select(Date, mngr, at_anf, win, res, hgoal, vgoal, goaldif) %&gt;% 
+  filter(mngr == &quot;Dalglish&quot;) %&gt;% 
+  mutate(run = &quot;&quot;, 
+         run = ifelse(Date &gt;= ymd(19850817) &amp; Date &lt;= ymd(19910209), 
+                      &quot;first&quot;, 
+                      &quot;second&quot;)) </code></pre>
+<pre class="r"><code>dalglish_odds &lt;- dalglish %&gt;% 
+  # Add a column for wins
+  group_by(mngr, run) %&gt;% 
+  # Add columns for home and away win totals and total games
+  summarise(total_hwins = sum(at_anf == &quot;Anfield&quot; &amp; win == 1), 
+            total_hgames = sum(at_anf == &quot;Anfield&quot;), 
+            total_awins = sum(at_anf != &quot;Anfield&quot; &amp; win == 1), 
+            total_agames = sum(at_anf != &quot;Anfield&quot;), 
+            total_games = total_hgames + total_agames) %&gt;% 
+  ungroup() %&gt;% 
+  # Calculate the the odds ratios
+  mutate(h_odds = (total_hwins / total_hgames) / (1 - total_hwins / total_hgames), 
+         a_odds = (total_awins / total_agames) / (1 - total_awins / total_agames), 
+         odds_ratio = round(h_odds / a_odds, 2)) %&gt;% 
+  select(mngr, run, total_games, odds_ratio) 
+
+kable(dalglish_odds, caption = &quot;Dalglish&#39;s Home and Away Wins Odds Ratio&quot;)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-5">Table 1: </span>Dalglish’s Home and Away Wins Odds Ratio</caption>
+<thead>
+<tr class="header">
+<th align="left">mngr</th>
+<th align="left">run</th>
+<th align="right">total_games</th>
+<th align="right">odds_ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Dalglish</td>
+<td align="left">first</td>
+<td align="right">224</td>
+<td align="right">2.5</td>
+</tr>
+<tr class="even">
+<td align="left">Dalglish</td>
+<td align="left">second</td>
+<td align="right">56</td>
+<td align="right">1.0</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>odds_ratio &lt;- function(h, tot_h, a, tot_a) {
+  # Calculates odd ratios 
+  # 
+  # Args 
+  #   h: home wins 
+  #   tot_h: total home games 
+  #   a: away wins 
+  #   tot_a: total away games 
+  ((h/tot_h) / (1 - h/tot_a)) / ((a/tot_a) / (1 - a/tot_a))
+}
+
+running_odds &lt;- dalglish %&gt;% 
+  group_by(run) %&gt;%
+  mutate(run_hwin = ifelse(at_anf == &quot;Anfield&quot; &amp; win == 1, 1, 0), 
+         run_hwin = cumsum(run_hwin), 
+         run_hgames = ifelse(at_anf == &quot;Anfield&quot;, 1, 0), 
+         run_hgames = cumsum(run_hgames), 
+         run_awin = ifelse(at_anf == &quot;Away&quot; &amp; win == 1, 1, 0), 
+         run_awin = cumsum(run_awin), 
+         run_agames = ifelse(at_anf == &quot;Away&quot;, 1, 0), 
+         run_agames = cumsum(run_agames), 
+         run_odds_ratio = odds_ratio(
+           run_hwin, run_hgames, run_awin, run_agames
+           )) %&gt;% 
+  ungroup() %&gt;%
+  split(.$run) %&gt;% 
+  # Number the games of each run
+  map(~mutate(., game = seq(1:nrow(.)))) %&gt;% 
+  bind_rows() %&gt;% 
+  # Remove NaNs caused by 0 home and away games played
+  filter(!is.nan(run_odds_ratio))</code></pre>
+<pre class="r"><code># Parameters for annotate
+first &lt;- running_odds %&gt;% 
+  filter(run == &quot;first&quot;) %&gt;%
+  filter(row_number() == nrow(.))
+
+second &lt;- running_odds %&gt;% 
+  filter(run == &quot;second&quot;) %&gt;% 
+  filter(row_number() == nrow(.))
+
+ggplot(data = running_odds, aes(x = game, y = run_odds_ratio, color = run)) + 
+  geom_line(size = .75, alpha = .5) + 
+  scale_color_manual(values = c(&quot;red&quot;, &quot;purple&quot;), 
+                     label = c(&quot;1985-1991&quot;, &quot;2011-2012&quot;)) +
+  annotate(&quot;text&quot;, 
+           x = nrow(filter(running_odds, run == &quot;first&quot;)), 
+           y = 0,  
+           label = first$run_odds_ratio, 
+           color = &quot;red&quot;, 
+           size = 5) +
+  annotate(&quot;text&quot;, 
+           x = nrow(filter(running_odds, run == &quot;second&quot;)), 
+           y = -2,  
+           label = second$run_odds_ratio, 
+           color = &quot;purple&quot;, 
+           size = 5) +
+  labs(title = &quot;Home/Away Win Odds Ratio Stabilized With More Games&quot;,
+       subtitle = &quot;Dalglish&#39;s Running Odds Ratio&quot;, 
+       x = &quot;Number of Games&quot;, 
+       y = &quot;Odds Ratio&quot;, 
+       color = &quot;&quot;)</code></pre>
+<p><img src="/post/2017-11-28-king-kenny-comparison_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>wins &lt;- lfc %&gt;% 
+  # Add a column for wins
+  mutate(win = 0,
+         win = ifelse(home == &quot;Liverpool&quot; &amp; result == &quot;H&quot;, 1, win), 
+         win = ifelse(visitor == &quot;Liverpool&quot; &amp; result == &quot;A&quot;, 1, win)) %&gt;% 
+  select(mngr, at_anf, win) %&gt;% 
+  group_by(mngr) %&gt;% 
+  # Add columns for home and away win totals and total games
+  summarise(total_hwins = sum(at_anf == &quot;Anfield&quot; &amp; win == 1), 
+            total_hgames = sum(at_anf == &quot;Anfield&quot;), 
+            total_awins = sum(at_anf != &quot;Anfield&quot; &amp; win == 1), 
+            total_agames = sum(at_anf != &quot;Anfield&quot;), 
+            total_games = total_hgames + total_agames, 
+            win_perc = 100 * ((total_hwins + total_awins) / total_games)) %&gt;% 
+  ungroup() %&gt;% 
+  # Calculate the the odds ratios
+  mutate(h_odds = (total_hwins / total_hgames) / (1 - total_hwins / total_hgames), 
+         a_odds = (total_awins / total_agames) / (1 - total_awins / total_agames), 
+         odds_ratio = round(h_odds / a_odds, 2)) %&gt;% 
+  select(mngr, total_games, odds_ratio, win_perc) %&gt;%
+  filter(total_games &gt;= 30) %&gt;% 
+  arrange(desc(win_perc)) 
+
+kable(head(wins, n = 5), caption = &quot;Top Five Win Percentages&quot;)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-8">Table 2: </span>Top Five Win Percentages</caption>
+<thead>
+<tr class="header">
+<th align="left">mngr</th>
+<th align="right">total_games</th>
+<th align="right">odds_ratio</th>
+<th align="right">win_perc</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Barclay</td>
+<td align="right">88</td>
+<td align="right">5.40</td>
+<td align="right">57.95455</td>
+</tr>
+<tr class="even">
+<td align="left">Dalglish</td>
+<td align="right">280</td>
+<td align="right">2.03</td>
+<td align="right">57.14286</td>
+</tr>
+<tr class="odd">
+<td align="left">Paisley</td>
+<td align="right">375</td>
+<td align="right">4.20</td>
+<td align="right">56.00000</td>
+</tr>
+<tr class="even">
+<td align="left">Benítez</td>
+<td align="right">228</td>
+<td align="right">2.98</td>
+<td align="right">55.26316</td>
+</tr>
+<tr class="odd">
+<td align="left">Ashworth</td>
+<td align="right">136</td>
+<td align="right">3.85</td>
+<td align="right">52.94118</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>top_5 &lt;- head(wins, n = 5)
+
+ggplot(data = wins, aes(x = odds_ratio, y = win_perc)) +
+  geom_point(aes(size = total_games), alpha = .5) + 
+  geom_point(data = top_5, color = &quot;red&quot;, aes(size = total_games)) +
+  geom_text(data = wins, aes(label = mngr), nudge_x = .6, check_overlap = T) + 
+  labs(title = &quot;Home/Away Win Odds Ratio Varies Across Win Percentages&quot;, 
+       subtitle = &quot;LFC Top Flight League Games 1893 - 2017&quot;, 
+       x = &quot;home/away win odds ratio&quot;, 
+       y = &quot;win percentage&quot;)</code></pre>
+<p><img src="/post/2017-11-28-king-kenny-comparison_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
