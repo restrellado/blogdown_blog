@@ -2,7 +2,7 @@
 title: "Comparing Home and Away Wins of Kenny Dalglish’s Managerial Runs (Also, Did It Matter?)"
 author: Ryan Estrellado
 date: '2017-11-28'
-slug: king-kenny-comparison
+slug: dalglish-odds-comparison
 categories: []
 tags: []
 ---
