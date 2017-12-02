@@ -23,6 +23,6 @@ pygmentsCodeFences = true
     tagline = "I work in public education and love data science." 
 
 [permalinks]
-  post = "/:year/:month/:slug/"
+  post = "/:year/:month/:filename/"
 
 
