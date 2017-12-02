@@ -3,8 +3,7 @@ title: "Liverpool FC's Managers: Home and Away Win Odds"
 author: Ryan Estrellado
 date: '2017-11-23'
 slug: lfc-home-and-away-odds
-aliases:
-    - /post/lfc-home-and-away-odds/
+aliases: /post/lfc-home-and-away-odds/
 categories: []
 tags: []
 ---
