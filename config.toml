@@ -1,7 +1,7 @@
 baseurl = "/"
 title = "Ryan Estrellado"
 copyright = "Copyright &copy; 2017 - Ryan Estrellado"
-canonifyurls = true
+canonifyurls = false
 theme = "hugo-kiera"
 
 paginate = 3
