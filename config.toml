@@ -21,8 +21,3 @@ pygmentsCodeFences = true
 
 [params]
     tagline = "I work in public education and love data science." 
-
-[permalinks]
-  post = "/post/:filename/"
-
-
