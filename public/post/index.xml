@@ -6,17 +6,44 @@
     <description>Recent content in Posts on Ryan Estrellado</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright &amp;copy; 2017 - Ryan Estrellado</copyright>
-    <lastBuildDate>Thu, 23 Nov 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Mon, 08 Jan 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>LFC’s Home and Away Wins</title>
-      <link>/post/lfc-s-home-and-away-wins/</link>
+      <title>A Brief Explanation of Data Cleaning Using Public School Data</title>
+      <link>/post/demonstration-cleaning-your-data/</link>
+      <pubDate>Mon, 08 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/demonstration-cleaning-your-data/</guid>
+      <description>It’s widely accepted that data scientists spend a much larger share of their time cleaning data than the actual analysis and modeling of the data. But it’s not always clear what data cleaning means or why it’s important if you aren’t familiar with all the steps of data analysis.</description>
+    </item>
+    
+    <item>
+      <title>Explaining Risk Ratios</title>
+      <link>/post/explaining_risk_ratios/</link>
+      <pubDate>Mon, 04 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/explaining_risk_ratios/</guid>
+      <description>Begin developing a practical understanding of what risk ratio means  Imagine that you’re visiting three booths at the farmers market. Each booth carries some combination of apples, oranges, and pears, but you don’t know exactly what each has on the day.</description>
+    </item>
+    
+    <item>
+      <title>Comparing Home and Away Wins of Kenny Dalglish’s Managerial Runs (Also, Did It Matter?)</title>
+      <link>/post/dalglish-odds-comparison/</link>
+      <pubDate>Sat, 02 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/post/dalglish-odds-comparison/</guid>
+      <description>After my first post, @HighlandDataSci on Twitter had a great question: Was Kenny Dalglish’s home and away win odds ratio different during his first run as manager than his second?</description>
+    </item>
+    
+    <item>
+      <title>Liverpool FC&#39;s Managers: Home and Away Win Odds</title>
+      <link>/post/lfc-home-and-away-odds/</link>
       <pubDate>Thu, 23 Nov 2017 00:00:00 +0000</pubDate>
       
-      <guid>/post/lfc-s-home-and-away-wins/</guid>
+      <guid>/post/lfc-home-and-away-odds/</guid>
       <description>Anfield in Liverpool is one of the legendary stadiums of English football. Fortress Anfield has been the home to many historic games, including Liverpool’s 4-3 win against Newcastle in 1996 and my personal favorite, Liverpool’s 3-1 win against Olympiacos to go through to the Champions League’s last 16.</description>
     </item>
     

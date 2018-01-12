@@ -13,7 +13,22 @@
   </url>
   
   <url>
-    <loc>/post/lfc-s-home-and-away-wins/</loc>
+    <loc>/post/demonstration-cleaning-your-data/</loc>
+    <lastmod>2018-01-08T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/explaining_risk_ratios/</loc>
+    <lastmod>2017-12-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/dalglish-odds-comparison/</loc>
+    <lastmod>2017-12-02T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/lfc-home-and-away-odds/</loc>
     <lastmod>2017-11-23T00:00:00+00:00</lastmod>
   </url>
   
@@ -29,12 +44,19 @@
   
   <url>
     <loc>/post/</loc>
-    <lastmod>2017-11-23T00:00:00+00:00</lastmod>
+    <lastmod>2018-01-08T00:00:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/school_data/</loc>
+    <lastmod>2018-01-08T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>/tags/</loc>
+    <lastmod>2018-01-08T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   

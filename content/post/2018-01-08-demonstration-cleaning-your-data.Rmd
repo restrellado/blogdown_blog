@@ -1,0 +1,108 @@
+---
+title: 'A Brief Explanation of Data Cleaning Using Public School Data'
+author: Ryan Estrellado
+date: '2018-01-08'
+slug: demonstration-cleaning-your-data
+categories: []
+tags: ["school_data"]
+draft: TRUE
+---
+
+```{r echo=FALSE}
+library(knitr) 
+```
+
+It's widely accepted that data scientists [spend a much larger share of their time cleaning data](https://www.forbes.com/forbes/welcome/?toURL=https://www.forbes.com/sites/gilpress/2016/03/23/data-preparation-most-time-consuming-least-enjoyable-data-science-task-survey-says/&refURL=https://www.google.com/&referrer=https://www.google.com/) than the actual analysis and modeling of the data. But it's not always clear what data cleaning means or why it's important if you aren't familiar with all the steps of data analysis. I thought it would be worthwhile to do a quick and dirty demonstration for folks who aren't familiar with the process and why it is such an important part of the analysis pipeline. 
+
+If you work a lot of public education data, you already know that a lot of it is available publicly as texts files. This is really convenient because you can pack a lot of data into small files and you can open them in all sorts of applications. On the other hand, the data very often needs to be cleaned before you can do anything useful with it. Have a look at these raw data files as examples: 
+
+- California Department of Education [Public Schools and Districts dataset](https://www.cde.ca.gov/schooldirectory/report?rid=dl1&tp=txt)  
+- California School Dashboards [datasets](https://www6.cde.ca.gov/californiamodel/report?indicator=ela&year=2017f&cdcode=&scode=6033047&reporttype=sgroups)  
+
+For this post we'll be using a dataset of special education dispute resolution data from the [US Department of Education's website]("https://www2.ed.gov/programs/osepidea/618-data/state-level-data-files/index.html"). This dataset counts the number of complaints written to state departments of education during the 2014-2015 school year. It also includes a number of related dispute resolution outcomes. All of the counts are organized by state. 
+
+# Preview: Raw Versus Cleaned Dataset 
+
+As a best practice, I'm including all my code for this post in the more detailed and technical sections below, but I also understand that non-R users may want to see the difference between a raw dataset and a cleaned dataset up front so they can begin to grasp the difference between the two. 
+
+Here's the dataset exactly as you would see it if you imported it into your spreadsheet software without cleaning it: 
+
+![](/images/dr_not_cleaned.png) 
+
+Here's the same dataset after we've cleaned it using the method below: 
+
+![](/images/dr_cleaned.png) 
+
+Now that you can start to visualize the difference, let's dig into the thinking behind it and why the cleaning process matters. 
+
+# How I Use R to Clean Data 
+
+I do all my data cleaning using the [program language R](https://www.r-project.org/about.html). This is helps me work faster by allowing me to use the same steps over and over again to clean many datasets. Think of it as creating one recipe that I use to bake a loaf of bread not just once, but over and over again. This way, if a client needs a year's worth of special education data and decides later they want the last ten years for comparison, I can apply the recipe quickly and they can spend more time exploring data and less time cleaning it. 
+
+### Raw Data 
+
+First, we'll have a look at the 2014-2015 dispute resolution data exactly as it is when you download it from the US Department of Education. Notice that when we load the data into memory, R immediately throws a warning about the number of missing column names. Column names will frequently need cleaning because they are often out of order, missing, or not named in way that is easy to understand.  
+
+Here's the first few lines of the dataset before we've done anything to clean it: 
+```{r message=FALSE}
+library(tidyverse)
+```
+
+```{r message=FALSE}
+url <- "https://www2.ed.gov/programs/osepidea/618-data/state-level-data-files/part-b-data/dispute-resolution/bdispres2014-15.csv"
+
+dr_notclean <- read_csv(url)
+
+head(dr_notclean, n = 10)
+```
+
+You can [download the whole dataset here]("https://www2.ed.gov/programs/osepidea/618-data/state-level-data-files/part-b-data/dispute-resolution/bdispres2014-15.csv") so you can inspect it further. You will notice right away that the column labels are pushed down a few rows because the extraction date is at the top instead. That creates a lot of empty space, which is why you see a lot of `NA` values and `X`s as column names. You can also see this in the screenshot of the raw data at the start of the post, which gives you a sense of what it would look like if you imported it into your favorite spreadsheet program. 
+
+You will notice that there are thirty one distinct categories with names that don't immediately describe what the numbers below them mean. For example, `Written, Signed Complaints (WSC) Total (1)` are the total count of written complaints submitted to the state agency, but might be easier to look at (if not more descriptive) by using something like `written_complaints`. 
+
+### Cleaned Data 
+
+But let's imagine you only want to know about the total number of complaints, the number of complaints that were ajudicated, the number of cases that were pending, and the number that were dismissed. We can make this datset easier to look at by removing all columns except the four we want. We can also gather the counts up into two columns: one for the thing you are counting, such as total complaints, and one for the count itself. Finally, let's say we are only interested in the states that have the ten highest counts of total complaints. Here are the first 10 lines of the dataset after we clean it this way: 
+
+```{r message=FALSE}
+dr <- read_csv(url, skip = 4) %>% 
+  select(State, 
+         Total_Complaints = `Due Process Complaints (DPC) Total (3)`, 
+         Settlement = `DPC Resolution Meetings - Written Settlement Agreements (3.1a)`,
+         Adjudicated = `DPC Hearings (fully adjudicated) Total (3.2)`, 
+         Pending = `DPC Pending (3.3)`, 
+         Dismissed = `DPC Withdrawn or Dismissed (3.4)`) %>% 
+  filter(State != "US, Outlying Areas, and Freely Associated States") %>% 
+  arrange(desc(Total_Complaints)) %>% 
+  filter(min_rank(desc(Total_Complaints)) <= 10) %>% 
+  gather(Category, Count, -State) 
+
+dr
+``` 
+
+```{r echo=FALSE}
+#write_csv(dr, "~/Documents/github/blog/static/post/2018-01-08-demonstration-cleaning-your-data_files/cleaned_dr.csv")
+```
+
+Much easier to look at! Now you see only the data that helps you answer the questions you want. You can download the cleaned dataset here so you can explore it further. 
+
+# Clean Data Means Faster Analysis 
+
+When data is cleaned in this way, you will have a much easier time sorting and building visualizations in Excel or with program languages like R and Python. Now that the data is cleaned, here is a quick visualization that compares the counts for the states that have the ten highest total complaints submitted: 
+
+```{r}
+ggplot(data = dr, 
+       aes(x = State, y = Count)) + 
+  geom_point(color = "cyan4", size = 3.0) + 
+  coord_flip() + 
+  facet_wrap(~Category) + 
+  labs(
+    title = "New York and California Have the Highest Counts of \nTotal Complaints and Dismissed Cases",
+    subtitle = "Data: 2014-2015 Dispute Resolution Data", 
+    x = "", 
+    y = "")
+```
+
+# Conclusion 
+
+This was a *very* short explanation of what data cleaning is and why it is useful. For an infinitely more thorough explanation of data cleaning theory, I recommend Hadley Wickham's [legenday paper on tidy data cleaning](http://vita.had.co.nz/papers/tidy-data.html). 

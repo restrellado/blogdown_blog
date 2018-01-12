@@ -54,8 +54,6 @@ mngrs_clean &lt;- mngrs_clean %&gt;%
   mutate_at(vars(From:To), funs(ymd)) %&gt;% 
   # Use today&#39;s date in the latest manager&#39;s &quot;To&quot; field 
   mutate(To = if_else(row_number() == nrow(mngrs_clean), Sys.Date(), To))</code></pre>
-<pre><code>## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &#39;default/America/
-## Los_Angeles&#39;</code></pre>
 <p>To make the dataset of Liverpool manager results, we’ll add the current season’s games to date to the <code>england</code> dataset and filter for just the Liverpool matches.</p>
 <pre class="r"><code># Current season
 england_17 &lt;- england_current(Season = 2017) 
@@ -231,8 +229,8 @@ kable(win_ratios, caption = &quot;Home Win Odds to Away Win Odds&quot;, align = 
 </tr>
 <tr class="odd">
 <td align="center">Klopp</td>
-<td align="center">81</td>
-<td align="center">1.28</td>
+<td align="center">90</td>
+<td align="center">1.09</td>
 </tr>
 <tr class="even">
 <td align="center">McQueen</td>

@@ -23,8 +23,6 @@ library(lubridate)
 library(stringr)
 library(rvest) 
 library(knitr)</code></pre>
-<pre><code>## Warning in as.POSIXlt.POSIXct(x, tz): unknown timezone &#39;default/America/
-## Los_Angeles&#39;</code></pre>
 <p>We’ll be starting with the same dataset I used in the first post, which we assigned to the variable <code>lfc</code>. We’ll narrow it down to only Kenny Dalglish’s games and split his games up so we can look at his two runs separately.</p>
 <pre class="r"><code>dalglish &lt;- lfc %&gt;% 
   # Add a column for wins

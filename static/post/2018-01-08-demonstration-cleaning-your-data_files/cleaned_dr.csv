@@ -1,0 +1,51 @@
+State,Category,Count
+New York,Total_Complaints,5170
+California,Total_Complaints,3714
+Puerto Rico,Total_Complaints,2354
+New Jersey,Total_Complaints,1211
+Pennsylvania,Total_Complaints,804
+Massachusetts,Total_Complaints,492
+District of Columbia,Total_Complaints,457
+Texas,Total_Complaints,370
+Illinois,Total_Complaints,320
+Connecticut,Total_Complaints,250
+New York,Settlement,231
+California,Settlement,172
+Puerto Rico,Settlement,231
+New Jersey,Settlement,8
+Pennsylvania,Settlement,167
+Massachusetts,Settlement,8
+District of Columbia,Settlement,0
+Texas,Settlement,67
+Illinois,Settlement,28
+Connecticut,Settlement,32
+New York,Adjudicated,459
+California,Adjudicated,83
+Puerto Rico,Adjudicated,1628
+New Jersey,Adjudicated,52
+Pennsylvania,Adjudicated,65
+Massachusetts,Adjudicated,5
+District of Columbia,Adjudicated,138
+Texas,Adjudicated,14
+Illinois,Adjudicated,8
+Connecticut,Adjudicated,2
+New York,Pending,1219
+California,Pending,893
+Puerto Rico,Pending,87
+New Jersey,Pending,269
+Pennsylvania,Pending,178
+Massachusetts,Pending,196
+District of Columbia,Pending,45
+Texas,Pending,86
+Illinois,Pending,90
+Connecticut,Pending,74
+New York,Dismissed,3492
+California,Dismissed,2738
+Puerto Rico,Dismissed,639
+New Jersey,Dismissed,890
+Pennsylvania,Dismissed,561
+Massachusetts,Dismissed,291
+District of Columbia,Dismissed,274
+Texas,Dismissed,270
+Illinois,Dismissed,222
+Connecticut,Dismissed,174
