@@ -10,7 +10,7 @@ tags: ["school_data"]
 
 
 <p>It’s widely accepted that data scientists <a href="https://www.forbes.com/forbes/welcome/?toURL=https://www.forbes.com/sites/gilpress/2016/03/23/data-preparation-most-time-consuming-least-enjoyable-data-science-task-survey-says/&amp;refURL=https://www.google.com/&amp;referrer=https://www.google.com/">spend a much larger share of their time cleaning data</a> than the actual analysis and modeling of the data. But it’s not always clear what data cleaning means or why it’s important if you aren’t familiar with all the steps of data analysis. I thought it would be worthwhile to do a quick and dirty demonstration for folks who aren’t familiar with the process and why it is such an important part of the analysis pipeline.</p>
-<p>If you work a lot of public education data, you already know that a lot of it is available publicly as texts files. This is really convenient because you can pack a lot of data into small files and you can open them in all sorts of applications. On the other hand, the data very often needs to be cleaned before you can do anything useful with it. Have a look at these raw data files as examples:</p>
+<p>If you work with public education data, you already know that a lot of it is available publicly as texts files. This is really convenient because you can pack a lot of data into small files and you can open them in all sorts of applications. On the other hand, the data very often needs to be cleaned before you can do anything useful with it. Have a look at these raw data files as examples:</p>
 <ul>
 <li>California Department of Education <a href="https://www.cde.ca.gov/schooldirectory/report?rid=dl1&amp;tp=txt">Public Schools and Districts dataset</a><br />
 </li>
@@ -34,11 +34,11 @@ tags: ["school_data"]
 </div>
 <div id="how-i-use-r-to-clean-data" class="section level1">
 <h1>How I Use R to Clean Data</h1>
-<p>I do all my data cleaning using the <a href="https://www.r-project.org/about.html">program language R</a>. This is helps me work faster by allowing me to use the same steps over and over again to clean many datasets. Think of it as creating one recipe that I use to bake a loaf of bread not just once, but over and over again. This way, if a client needs a year’s worth of special education data and decides later they want the last ten years for comparison, I can apply the recipe quickly and they can spend more time exploring data and less time cleaning it.</p>
+<p>I do all my data cleaning using the <a href="https://www.r-project.org/about.html">program language R</a>. This helps me work faster by allowing me to use the same steps over and over again to clean many datasets. Think of it as creating one recipe that I use to bake a loaf of bread not just once, but over and over again. This way, if a client needs a year’s worth of special education data and decides later they want the last ten years for comparison, I can apply the recipe quickly and they can spend more time exploring data and less time cleaning it.</p>
 <div id="raw-data" class="section level3">
 <h3>Raw Data</h3>
-<p>First, we’ll have a look at the 2014-2015 dispute resolution data exactly as it is when you download it from the US Department of Education. Notice that when we load the data into memory, R immediately throws a warning about the number of missing column names. Column names will frequently need cleaning because they are often out of order, missing, or not named in way that is easy to understand.</p>
-<p>Here’s the first few lines of the dataset before we’ve done anything to clean it:</p>
+<p>First, we’ll have a look at the 2014-2015 dispute resolution data exactly as it is when you download it from the US Department of Education. Notice that when we load the data into memory, R immediately throws a warning about the number of missing column names. Column names will frequently need cleaning because they are often out of order, missing, or not named in a way that is easy to understand.</p>
+<p>Here are the first few lines of the dataset before we’ve done anything to clean it:</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre class="r"><code>url &lt;- &quot;https://www2.ed.gov/programs/osepidea/618-data/state-level-data-files/part-b-data/dispute-resolution/bdispres2014-15.csv&quot;
 
@@ -72,7 +72,7 @@ dr_notclean &lt;- read_csv(url)</code></pre>
 </div>
 <div id="cleaned-data" class="section level3">
 <h3>Cleaned Data</h3>
-<p>But let’s imagine you only want to know about the total number of complaints, the number of complaints that were ajudicated, the number of cases that were pending, and the number that were dismissed. We can make this datset easier to look at by removing all columns except the four we want. We can also gather the counts up into two columns: one for the thing you are counting, such as total complaints, and one for the count itself. Finally, let’s say we are only interested in the states that have the ten highest counts of total complaints. Here are the first 10 lines of the dataset after we clean it this way:</p>
+<p>But let’s imagine you only want to know about the total number of complaints, the number of complaints that were ajudicated, the number of cases that were pending, and the number that were dismissed. We can make this dataset easier to look at by removing all columns except the four we want. We can also gather the counts up into two columns: one for the thing you are counting, such as total complaints, and one for the count itself. Finally, let’s say we are only interested in the states that have the ten highest counts of total complaints. Here are the first 10 lines of the dataset after we clean it this way:</p>
 <pre class="r"><code>dr &lt;- read_csv(url, skip = 4) %&gt;% 
   select(State, 
          Total_Complaints = `Due Process Complaints (DPC) Total (3)`, 
@@ -105,7 +105,7 @@ dr</code></pre>
 </div>
 <div id="clean-data-means-faster-analysis" class="section level1">
 <h1>Clean Data Means Faster Analysis</h1>
-<p>When data is cleaned in this way, you will have a much easier time sorting and building visualizations in Excel or with program languages like R and Python. Now that the data is cleaned, here is a quick visualization that compares the counts for the states that have the ten highest total complaints submitted:</p>
+<p>When data is cleaned in this way, you will have a much easier time sorting and building visualizations in Excel or with programming languages like R and Python. Now that the data is cleaned, here is a quick visualization that compares the counts for the states that have the ten highest total complaints submitted:</p>
 <pre class="r"><code>ggplot(data = dr, 
        aes(x = State, y = Count)) + 
   geom_point(color = &quot;cyan4&quot;, size = 3.0) + 
