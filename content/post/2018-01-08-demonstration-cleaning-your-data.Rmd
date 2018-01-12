@@ -83,7 +83,7 @@ dr
 #write_csv(dr, "~/Documents/github/blog/static/post/2018-01-08-demonstration-cleaning-your-data_files/cleaned_dr.csv")
 ```
 
-Much easier to look at! Now you see only the data that helps you answer the questions you want. You can download the cleaned dataset here so you can explore it further. 
+Much easier to look at! Now you see only the data that helps you answer the questions you want. You can [download the cleaned dataset here](https://github.com/restrellado/blogdown_blog/blob/master/static/post/2018-01-08-demonstration-cleaning-your-data_files/cleaned_dr.csv) so you can explore it further. 
 
 # Clean Data Means Faster Analysis 
 
