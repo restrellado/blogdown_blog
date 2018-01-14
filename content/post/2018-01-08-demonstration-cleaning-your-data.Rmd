@@ -80,6 +80,7 @@ dr
 ``` 
 
 ```{r echo=FALSE}
+# Write the csv so it can be linked to from GitHub
 #write_csv(dr, "~/Documents/github/blog/static/post/2018-01-08-demonstration-cleaning-your-data_files/cleaned_dr.csv")
 ```
 

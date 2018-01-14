@@ -34,15 +34,15 @@ farmers</code></pre>
 <pre><code>## # A tibble: 9 x 3
 ##   farmer fruit   count
 ##   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;
-## 1 John   apples     65
-## 2 John   oranges    51
-## 3 John   plums      89
-## 4 Jane   apples     45
-## 5 Jane   oranges    38
-## 6 Jane   plums      47
-## 7 Lilly  apples     30
-## 8 Lilly  oranges    66
-## 9 Lilly  plums      95</code></pre>
+## 1 John   apples     68
+## 2 John   oranges    90
+## 3 John   plums      80
+## 4 Jane   apples     96
+## 5 Jane   oranges    44
+## 6 Jane   plums      72
+## 7 Lilly  apples     89
+## 8 Lilly  oranges    48
+## 9 Lilly  plums      47</code></pre>
 <p>Remember that in this example we’re comparing the liklihood (aka, the risk) of John having apples to everyone else having apples. So we’ll first need to figure out what the liklihood is that John has apples.</p>
 <pre class="r"><code>john &lt;- farmers %&gt;% 
   filter(farmer == &quot;John&quot;) %&gt;% 
@@ -52,7 +52,7 @@ john</code></pre>
 <pre><code>## # A tibble: 3 x 4
 ##   farmer fruit   count percent_of_total
 ##   &lt;chr&gt;  &lt;chr&gt;   &lt;int&gt;            &lt;dbl&gt;
-## 1 John   apples     65            0.320
-## 2 John   oranges    51            0.250
-## 3 John   plums      89            0.430</code></pre>
+## 1 John   apples     68            0.290
+## 2 John   oranges    90            0.380
+## 3 John   plums      80            0.340</code></pre>
 <p>So we now know that John has a 29 percent chance (or risk) of fruit.</p>
