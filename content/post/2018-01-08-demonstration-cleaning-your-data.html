@@ -1,5 +1,5 @@
 ---
-title: 'A Brief Explanation of Data Cleaning Using Public School Data'
+title: 'Public School Data is Great, But You Have to Clean It First'
 author: Ryan Estrellado
 date: '2018-01-08'
 slug: demonstration-cleaning-your-data
@@ -9,32 +9,38 @@ tags: ["school_data"]
 
 
 
-<p>It’s widely accepted that data scientists <a href="https://www.forbes.com/forbes/welcome/?toURL=https://www.forbes.com/sites/gilpress/2016/03/23/data-preparation-most-time-consuming-least-enjoyable-data-science-task-survey-says/&amp;refURL=https://www.google.com/&amp;referrer=https://www.google.com/">spend a much larger share of their time cleaning data</a> than the actual analysis and modeling of the data. But it’s not always clear what data cleaning means or why it’s important if you aren’t familiar with all the steps of data analysis. I thought it would be worthwhile to do a quick and dirty demonstration for folks who aren’t familiar with the process and why it is such an important part of the analysis pipeline.</p>
-<p>If you work with public education data, you already know that a lot of it is available publicly as texts files. This is really convenient because you can pack a lot of data into small files and you can open them in all sorts of applications. On the other hand, the data very often needs to be cleaned before you can do anything useful with it. Have a look at these raw data files as examples:</p>
+<p>Using public school data can help school districts see the bigger picture of what is going on. So why don’t we see more districts taking advantage of this information gold mine? The datasets available from federal and state governments are often messy in their current form. This raw data has to be cleaned before it can be useful and school districts don’t often have the staff or time to clean large datasets or groups of large datasets. Here are two examples of really useful datasets, but in their raw, messy form:</p>
 <ul>
 <li>California Department of Education <a href="https://www.cde.ca.gov/schooldirectory/report?rid=dl1&amp;tp=txt">Public Schools and Districts dataset</a><br />
 </li>
 <li>California School Dashboards <a href="https://www6.cde.ca.gov/californiamodel/report?indicator=ela&amp;year=2017f&amp;cdcode=&amp;scode=6033047&amp;reporttype=sgroups">datasets</a></li>
 </ul>
-<p>For this post we’ll be using a dataset of special education dispute resolution data from the <a href="%22https://www2.ed.gov/programs/osepidea/618-data/state-level-data-files/index.html%22">US Department of Education’s website</a>. This dataset counts the number of complaints written to state departments of education during the 2014-2015 school year. It also includes a number of related dispute resolution outcomes. All of the counts are organized by state.</p>
-<div id="preview-raw-versus-cleaned-dataset" class="section level1">
-<h1>Preview: Raw Versus Cleaned Dataset</h1>
-<p>As a best practice, I’m including all my code for this post in the more detailed and technical sections below, but I also understand that non-R users may want to see the difference between a raw dataset and a cleaned dataset up front so they can begin to grasp the difference between the two.</p>
-<p>Here’s the dataset exactly as you would see it if you imported it into your spreadsheet software without cleaning it:</p>
+<p>Raw data is a treasure chest of information, but it takes time to clean them up in a fast and accurate manner. I wrote this post to demonstrate how I clean raw data before delivering it to a client in a more useful form.</p>
+<div id="example-of-our-data-cleanup" class="section level1">
+<h1>Example of Our Data Cleanup</h1>
+<p>This example uses a dataset of special education dispute resolution data from the <a href="%22https://www2.ed.gov/programs/osepidea/618-data/state-level-data-files/index.html%22">US Department of Education’s website</a>.</p>
+<p>This dataset counts the number of complaints written to state departments of education during the 2014-2015 school year. It includes related dispute resolution outcomes. All of the counts are organized by state.</p>
+</div>
+<div id="clean-data-is-more-useful" class="section level1">
+<h1>Clean Data Is More Useful</h1>
+<p>Here’s the data as-is, if you imported it into your spreadsheet software without cleaning it:</p>
 <div class="figure">
 <img src="/images/dr_not_cleaned.png" />
 
 </div>
-<p>Here’s the same dataset after we’ve cleaned it using the method below:</p>
+<p>Here’s the same dataset after I’ve cleaned it:</p>
 <div class="figure">
 <img src="/images/dr_cleaned.png" />
 
 </div>
-<p>Now that you can start to visualize the difference, let’s dig into the thinking behind it and why the cleaning process matters.</p>
 </div>
 <div id="how-i-use-r-to-clean-data" class="section level1">
 <h1>How I Use R to Clean Data</h1>
-<p>I do all my data cleaning using the <a href="https://www.r-project.org/about.html">program language R</a>. This helps me work faster by allowing me to use the same steps over and over again to clean many datasets. Think of it as creating one recipe that I use to bake a loaf of bread not just once, but over and over again. This way, if a client needs a year’s worth of special education data and decides later they want the last ten years for comparison, I can apply the recipe quickly and they can spend more time exploring data and less time cleaning it.</p>
+<p>I use a <a href="https://www.r-project.org/about.html">programming language called R</a>. R programming allows me to work faster by doing the same steps repeatedly to clean a lot of datasets. Instead of manually cleaning data in a spreadsheet with several steps, I have the steps automated in R. This way, if a client needs a year’s worth of special education data and decides later they want the last ten years for comparison, I can apply the recipe quickly and they can jump right to exploring their data.</p>
+</div>
+<div id="a-more-technical-exploration-and-example-dispute-resolution-plot" class="section level1">
+<h1>A More Technical Exploration and Example Dispute Resolution Plot</h1>
+<p>If you’re interested in what this process looks like, here’s a more detailed explanation. I’ve also included an example visualization of the dispute resolution data that results from the cleaned dataset. All the code for this post can be found in its entirety on my <a href="%22https://github.com/restrellado%22">GitHub page</a>.</p>
 <div id="raw-data" class="section level3">
 <h3>Raw Data</h3>
 <p>First, we’ll have a look at the 2014-2015 dispute resolution data exactly as it is when you download it from the US Department of Education. Notice that when we load the data into memory, R immediately throws a warning about the number of missing column names. Column names will frequently need cleaning because they are often out of order, missing, or not named in a way that is easy to understand.</p>
