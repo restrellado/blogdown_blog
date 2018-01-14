@@ -101,7 +101,7 @@ ggplot(data = dr,
   coord_flip() + 
   facet_wrap(~Category) + 
   labs(
-    title = "New York and California Have the Highest Counts of \nTotal Complaints and Dismissed Cases",
+    title = "Exploring Dispute Resolution Counts",
     subtitle = "Data: 2014-2015 Dispute Resolution Data", 
     x = "", 
     y = "")
