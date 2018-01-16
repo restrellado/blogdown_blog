@@ -4,7 +4,7 @@ author: Ryan Estrellado
 date: '2017-11-23'
 slug: lfc-home-and-away-odds
 categories: []
-tags: []
+tags: ["soccer"]
 ---
 
 [Anfield](https://en.wikipedia.org/wiki/Anfield) in Liverpool is one of the legendary stadiums of English football. [Fortress Anfield](http://www.telegraph.co.uk/football/2016/09/09/jurgen-klopp-vows-to-make-anfield-a-fortress/) has been the home to many historic games, including Liverpool's [4-3 win against Newcastle in 1996](https://en.wikipedia.org/wiki/Liverpool_F.C._4%E2%80%933_Newcastle_United_F.C._(1996)) and my personal favorite, [Liverpool's 3-1 win against Olympiacos](http://www.uefa.com/uefachampionsleague/season=2004/matches/round=1968/match=1077225/postmatch/report/) to go through to the Champions League's last 16. But I've been curious about how much of a difference Anfield has made historically from manager to manager. In this post I'll be exploring the question: Have all of Liverpool's managers won at Anfield more than they have away? 

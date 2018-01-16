@@ -4,7 +4,7 @@ author: Ryan Estrellado
 date: '2017-12-02'
 slug: dalglish-odds-comparison
 categories: []
-tags: []
+tags: ["soccer"]
 ---
 
 After my [first post](https://ryanestrellado.netlify.com/post/lfc-home-and-away-odds/), @HighlandDataSci [on Twitter](https://twitter.com/HighlandDataSci) had a great question: Was Kenny Dalglish's home and away win odds ratio different during his first run as manager than his second? 
