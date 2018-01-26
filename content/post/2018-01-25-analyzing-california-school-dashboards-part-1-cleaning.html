@@ -1,0 +1,93 @@
+---
+title: 'Analyzing California School Dashboards Part 1: Cleaning'
+author: Ryan Estrellado
+date: '2018-01-25'
+slug: analyzing-california-school-dashboards-part-1-cleaning
+categories: []
+tags: []
+draft: TRUE
+---
+
+
+
+<pre class="r"><code>library(tidyverse) </code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.4
+## ✔ tidyr   0.7.2     ✔ stringr 1.2.0
+## ✔ readr   1.1.1     ✔ forcats 0.2.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(spedtools)</code></pre>
+<pre class="r"><code>math &lt;- read_tsv(&quot;https://query.data.world/s/ShZJAPpHw2DA4dkGvoTKU6xzSb5A61&quot;, 
+                 # Show the whole CDS code instead of scientific format
+                 col_types = cols(cds = col_character())) </code></pre>
+<pre><code>## Warning: Missing column names filled in: &#39;X26&#39; [26]</code></pre>
+<pre class="r"><code>glimpse(math)</code></pre>
+<pre><code>## Observations: 232
+## Variables: 26
+## $ cds            &lt;chr&gt; &quot;43696410000000&quot;, &quot;43696410000000&quot;, &quot;4369641000...
+## $ rtype          &lt;chr&gt; &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D&quot;, &quot;D...
+## $ schoolname     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
+## $ districtname   &lt;chr&gt; &quot;Palo Alto Unified&quot;, &quot;Palo Alto Unified&quot;, &quot;Palo...
+## $ countyname     &lt;chr&gt; &quot;Santa Clara&quot;, &quot;Santa Clara&quot;, &quot;Santa Clara&quot;, &quot;S...
+## $ charter_flag   &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
+## $ coe_flag       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
+## $ studentgroup   &lt;chr&gt; &quot;AA&quot;, &quot;AI&quot;, &quot;ALL&quot;, &quot;AS&quot;, &quot;EL&quot;, &quot;ELO&quot;, &quot;EO&quot;, &quot;FI...
+## $ currdenom      &lt;int&gt; 76, 11, 5480, 1930, 1080, 283, 3495, 37, 6, 688...
+## $ currstatus     &lt;dbl&gt; -46.2, 22.7, 77.7, 120.9, 37.2, -17.3, 78.1, 46...
+## $ priordenom     &lt;int&gt; 96, 15, 5638, 1970, 1103, 399, 3709, 42, 1, 667...
+## $ priorstatus    &lt;dbl&gt; -27.0, 32.7, 79.7, 118.8, 47.3, 23.0, 80.9, 52....
+## $ change         &lt;dbl&gt; -19.2, -9.9, -2.0, 2.0, -10.1, -40.3, -2.7, -5....
+## $ statuslevel    &lt;int&gt; 2, 4, 5, 5, 5, 3, 5, 5, 0, 3, 2, 5, 2, 5, 2, 3,...
+## $ changelevel    &lt;int&gt; 1, 2, 3, 3, 2, 1, 3, 2, 0, 2, 0, 2, 1, 2, 2, 2,...
+## $ color          &lt;int&gt; 2, 0, 5, 5, 4, 0, 0, 4, 0, 3, 0, 4, 2, 0, 2, 3,...
+## $ box            &lt;int&gt; 160, 0, 30, 30, 20, 0, 0, 20, 0, 120, 0, 20, 16...
+## $ caa_denom      &lt;int&gt; NA, NA, 28, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
+## $ caa_level1_num &lt;int&gt; NA, NA, 22, NA, NA, NA, NA, NA, NA, NA, NA, NA,...
+## $ caa_level1_pct &lt;dbl&gt; NA, NA, 78.6, NA, NA, NA, NA, NA, NA, NA, NA, N...
+## $ caa_level2_num &lt;int&gt; NA, NA, 5, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ caa_level2_pct &lt;dbl&gt; NA, NA, 17.9, NA, NA, NA, NA, NA, NA, NA, NA, N...
+## $ caa_level3_num &lt;int&gt; NA, NA, 1, NA, NA, NA, NA, NA, NA, NA, NA, NA, ...
+## $ caa_level3_pct &lt;dbl&gt; NA, NA, 3.6, NA, NA, NA, NA, NA, NA, NA, NA, NA...
+## $ ReportingYear  &lt;chr&gt; &quot;2017f&quot;, &quot;2017f&quot;, &quot;2017f&quot;, &quot;2017f&quot;, &quot;2017f&quot;, &quot;2...
+## $ X26            &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,...</code></pre>
+<p><a href="https://www.cde.ca.gov/ta/ac/cm/mathgr38fall17.asp">file layout</a></p>
+<pre class="r"><code>math &lt;- math %&gt;% 
+  filter(rtype == &quot;S&quot;) %&gt;% 
+  select(cds, school = schoolname, subgroup = studentgroup, student_count = currdenom, avg_dfrom3 = currstatus)
+
+math</code></pre>
+<pre><code>## # A tibble: 215 x 5
+##    cds            school             subgroup student_count avg_dfrom3
+##    &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;            &lt;int&gt;      &lt;dbl&gt;
+##  1 43696416048193 Addison Elementary AA                   2      NA   
+##  2 43696416048193 Addison Elementary ALL                217      57.3 
+##  3 43696416048193 Addison Elementary AS                  45      73.8 
+##  4 43696416048193 Addison Elementary EL                  44      26.1 
+##  5 43696416048193 Addison Elementary ELO                 18     - 8.00
+##  6 43696416048193 Addison Elementary EO                 158      60.6 
+##  7 43696416048193 Addison Elementary FI                   1      NA   
+##  8 43696416048193 Addison Elementary HI                  23     -22.0 
+##  9 43696416048193 Addison Elementary MR                  31      62.5 
+## 10 43696416048193 Addison Elementary RFP                 26      49.7 
+## # ... with 205 more rows</code></pre>
+<pre class="r"><code>math &lt;- math %&gt;% 
+  mutate(subgroup = convert_subgroup(subgroup)) 
+
+math</code></pre>
+<pre><code>## # A tibble: 215 x 5
+##    cds            school             subgroup     student_count avg_dfrom3
+##    &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;                &lt;int&gt;      &lt;dbl&gt;
+##  1 43696416048193 Addison Elementary Black/Afric…             2      NA   
+##  2 43696416048193 Addison Elementary All Students           217      57.3 
+##  3 43696416048193 Addison Elementary Asian                   45      73.8 
+##  4 43696416048193 Addison Elementary English Lea…            44      26.1 
+##  5 43696416048193 Addison Elementary English Lea…            18     - 8.00
+##  6 43696416048193 Addison Elementary English Only           158      60.6 
+##  7 43696416048193 Addison Elementary Filipino                 1      NA   
+##  8 43696416048193 Addison Elementary Hispanic                23     -22.0 
+##  9 43696416048193 Addison Elementary Multiple Ra…            31      62.5 
+## 10 43696416048193 Addison Elementary RFEPs Only              26      49.7 
+## # ... with 205 more rows</code></pre>

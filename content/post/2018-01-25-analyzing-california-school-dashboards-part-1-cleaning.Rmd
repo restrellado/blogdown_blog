@@ -1,0 +1,40 @@
+---
+title: 'Analyzing California School Dashboards Part 1: Cleaning'
+author: Ryan Estrellado
+date: '2018-01-25'
+slug: analyzing-california-school-dashboards-part-1-cleaning
+categories: []
+tags: []
+draft: TRUE
+---
+
+```{r}
+library(tidyverse) 
+library(spedtools)
+```
+
+```{r}
+math <- read_tsv("https://query.data.world/s/ShZJAPpHw2DA4dkGvoTKU6xzSb5A61", 
+                 # Show the whole CDS code instead of scientific format
+                 col_types = cols(cds = col_character())) 
+
+glimpse(math)
+```
+
+[file layout](https://www.cde.ca.gov/ta/ac/cm/mathgr38fall17.asp) 
+
+```{r}
+math <- math %>% 
+  filter(rtype == "S") %>% 
+  select(cds, school = schoolname, subgroup = studentgroup, student_count = currdenom, avg_dfrom3 = currstatus)
+
+math
+```
+
+```{r}
+math <- math %>% 
+  mutate(subgroup = convert_subgroup(subgroup)) 
+
+math
+```
+
