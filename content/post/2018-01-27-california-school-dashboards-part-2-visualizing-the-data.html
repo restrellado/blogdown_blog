@@ -1,0 +1,45 @@
+---
+title: 'California School Dashboards Part 2: Visualizing the Data'
+author: Ryan Estrellado
+date: '2018-01-27'
+slug: california-school-dashboards-part-2-visualizing-the-data
+categories: []
+tags:
+  - school_data
+draft: TRUE
+---
+
+
+
+<p><a href="https://www.niche.com/k12/search/largest-school-districts/s/california/">Three largest school districts in California</a></p>
+<pre class="r"><code># A list of urls for each dataset
+urls &lt;- as.list(c(
+  &quot;https://query.data.world/s/RBwim7uqVwPq73bkHsYKVHbshZst0M&quot;, 
+  &quot;https://query.data.world/s/LSizff8-rMxKNcvkhaGkHqaPhRnt-N&quot;, 
+  &quot;https://query.data.world/s/CekXKAmUmvwDMqbWS4RDu6texq6rNn&quot;
+))</code></pre>
+<pre class="r"><code>all_files &lt;- urls %&gt;% map(~read_tsv(., col_types = cols(cds = col_character())))</code></pre>
+<pre class="r"><code># Create list names
+list_names &lt;- all_files %&gt;% map(~unique(.$districtname))
+
+# Clean all three files
+clean_data &lt;- all_files %&gt;% map(clean_dashboard) %&gt;% 
+  set_names(nm = list_names)</code></pre>
+<pre class="r"><code>clean_data %&gt;% map(dim)</code></pre>
+<pre><code>## $`Long Beach Unified`
+## [1] 1037    9
+## 
+## $`Los Angeles Unified`
+## [1] 7178    9
+## 
+## $`San Diego Unified`
+## [1] 2021    9</code></pre>
+<pre class="r"><code>clean_data &lt;- clean_data %&gt;% bind_rows()</code></pre>
+<pre class="r"><code>ggplot(data = clean_data) + 
+  geom_bar(aes(x = changelevel)) + 
+  labs(title = &quot;English Language Arts Change Levels: Distance From Three&quot;, 
+       x = &quot;&quot;, 
+       y = &quot;Number of Subgroups&quot;) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  facet_wrap(~districtname)</code></pre>
+<p><img src="/post/2018-01-27-california-school-dashboards-part-2-visualizing-the-data_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>

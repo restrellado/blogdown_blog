@@ -1,0 +1,84 @@
+---
+title: 'California School Dashboards Part 2: Visualizing the Data'
+author: Ryan Estrellado
+date: '2018-01-27'
+slug: california-school-dashboards-part-2-visualizing-the-data
+categories: []
+tags:
+  - school_data
+draft: TRUE
+---
+
+[Three largest school districts in California](https://www.niche.com/k12/search/largest-school-districts/s/california/) 
+
+```{r echo=FALSE, message=FALSE}
+library(tidyverse) 
+library(spedtools) 
+library(knitr)
+```
+
+```{r}
+# A list of urls for each dataset
+urls <- as.list(c(
+  "https://query.data.world/s/RBwim7uqVwPq73bkHsYKVHbshZst0M", 
+  "https://query.data.world/s/LSizff8-rMxKNcvkhaGkHqaPhRnt-N", 
+  "https://query.data.world/s/CekXKAmUmvwDMqbWS4RDu6texq6rNn"
+))
+``` 
+
+```{r read, warning=FALSE}
+all_files <- urls %>% map(~read_tsv(., col_types = cols(cds = col_character())))
+```
+
+```{r clean data, echo=FALSE}
+clean_dashboard <- function(d) {
+  # Cleans the ELA data from the California School Dashboard
+  # Args: 
+  #  d: English language arts dataset 
+  # Returns: A clean tibble
+  
+  change_lookup <- c(
+    "0" = "No Data", "1" = "Decreased Sig", "2" = "Decreased", 
+    "3" = "Maintained", "4" = "Increased", "5" = "Increased Sig"
+)
+  new_levels = c(
+    "No Data", "Decreased Sig", "Decreased", "Maintained", 
+    "Increased", "Increased Sig"
+  )
+  d %>% 
+    filter(rtype != "D") %>% 
+    filter(studentgroup != "ALL") %>%
+    select(schoolname, districtname, studentgroup, subgroup_size = currdenom, 
+           avg_dfrom3 = currstatus, change, statuslevel, changelevel, color) %>%
+    mutate(studentgroup = convert_subgroup(studentgroup), 
+           changelevel = as.vector(change_lookup[as.character(changelevel)]), 
+           changelevel = factor(changelevel, levels = new_levels)) 
+} 
+```
+
+```{r}
+# Create list names
+list_names <- all_files %>% map(~unique(.$districtname))
+
+# Clean all three files
+clean_data <- all_files %>% map(clean_dashboard) %>% 
+  set_names(nm = list_names)
+```
+
+```{r}
+clean_data %>% map(dim)
+```
+
+```{r}
+clean_data <- clean_data %>% bind_rows()
+```
+
+```{r}
+ggplot(data = clean_data) + 
+  geom_bar(aes(x = changelevel)) + 
+  labs(title = "English Language Arts Change Levels: Distance From Three", 
+       x = "", 
+       y = "Number of Subgroups") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  facet_wrap(~districtname)
+```
