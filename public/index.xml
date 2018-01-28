@@ -23,12 +23,31 @@ It makes use of a variety of open source projects including:
     </item>
     
     <item>
-      <title>Analyzing California School Dashboards Part 1: Cleaning</title>
+      <title>California School Dashboards Part 2: Visualizing the Data</title>
+      <link>/post/california-school-dashboards-part-2-visualizing-the-data/</link>
+      <pubDate>Sat, 27 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/california-school-dashboards-part-2-visualizing-the-data/</guid>
+      <description>Three largest school districts in California
+# A list of urls for each dataset urls &amp;lt;- as.list(c( &amp;quot;https://query.data.world/s/RBwim7uqVwPq73bkHsYKVHbshZst0M&amp;quot;, &amp;quot;https://query.data.world/s/LSizff8-rMxKNcvkhaGkHqaPhRnt-N&amp;quot;, &amp;quot;https://query.data.world/s/CekXKAmUmvwDMqbWS4RDu6texq6rNn&amp;quot; )) all_files &amp;lt;- urls %&amp;gt;% map(~read_tsv(., col_types = cols(cds = col_character()))) # Create list names list_names &amp;lt;- all_files %&amp;gt;% map(~unique(.</description>
+    </item>
+    
+    <item>
+      <title>How I Learned Data Science While Being A School Psychologist</title>
+      <link>/post/how-i-learned-data-science-while-being-a-school-psychologist/</link>
+      <pubDate>Sat, 27 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/how-i-learned-data-science-while-being-a-school-psychologist/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>California School Dashboards Part 1: Cleaning and Transforming</title>
       <link>/post/analyzing-california-school-dashboards-part-1-cleaning/</link>
       <pubDate>Thu, 25 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/post/analyzing-california-school-dashboards-part-1-cleaning/</guid>
-      <description>library(tidyverse)  ## ── Attaching packages ───────────────────────────────────────────── tidyverse 1.2.1 ── ## ✔ ggplot2 2.2.1 ✔ purrr 0.2.4 ## ✔ tibble 1.4.2 ✔ dplyr 0.7.4 ## ✔ tidyr 0.7.2 ✔ stringr 1.</description>
+      <description>Introduction: It’s Ok to Skip Around I’m writing this series for data scientists, public school educators, and data scientists who are also public school educators. Turns out, this is pretty hard to do.</description>
     </item>
     
     <item>
