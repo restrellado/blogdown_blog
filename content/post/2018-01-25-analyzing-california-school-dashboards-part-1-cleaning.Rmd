@@ -1,40 +1,147 @@
 ---
-title: 'Analyzing California School Dashboards Part 1: Cleaning'
+title: 'California School Dashboards Part 1: Cleaning and Transforming'
 author: Ryan Estrellado
 date: '2018-01-25'
 slug: analyzing-california-school-dashboards-part-1-cleaning
 categories: []
-tags: []
+tags: [school_data]
 draft: TRUE
 ---
 
-```{r}
-library(tidyverse) 
-library(spedtools)
-```
+# Introduction: It's Ok to Skip Around 
+
+I'm writing this series for data scientists, public school educators, and data scientists who are also public school educators. Turns out, this is pretty hard to do. Most data scientists want to see reprodicible code because it [explains the analysis explicitly](https://simplystatistics.org/2014/06/06/the-real-reason-reproducible-research-is-important/). On the other hand, public educators may be less interested in the code and more interested in the process, questions, and answers. 
+
+So to keep things as interesting as I can for all parties, I broke up the post with descriptive headers so readers can skip sections or jump around to where their curiosity takes them. There's code scattered throughout the post, but if that's not interesting to you feel free to jump right over it and into the results. These usually appear right after the code. If code is your thing, you are always welcome to [view all of it on my GitHub profile](https://github.com/restrellado/blogdown_blog) and to help me by [making contributions and improvements](https://help.github.com/articles/creating-a-pull-request/). 
+
+# There's More to the Data Than Just the Dashboard Website 
+
+The California School Dashboard website was built to show and analyze public school metrics such as English language arts test scores and graduation rates. The website delivers the information using icons that show scores and growth from the previous year. They also use a color coded grid so you can compare scores and growth across schools. 
+
+For a lot of folks the interface and visuals on the website will be enough to answer the questions they are asking about a school district. Others may find that the natural progression of curiosity leads to questions that require stepping outside of the California School Dashboard website to ask more specific questions and to compare across districts. If you want to start answering questions outside of what's available in the dashboard website, you'll need to get the data out of the website and work with it directly. 
+
+This series of posts will work through the analysis process, covering the main steps I take when exploring public education datasets: 
+
+- Importing and cleaning the data 
+- Exploring the data through visualization 
+- Exploring the data through modeling 
+
+We'll cover the first step here and will do the rest in later posts. 
+
+# Importing the Raw Data
+
+I wanted to use a school district that had enough schools to make the exploration interesting, but not so big that we get too lost in the number of records available. I picked the Palo Alto Unified School District's math dataset, but the code will work on any of the publicly available datasets. 
+
+The California Department of Education makes this data available on the five-by-five grid pages. First we'll bring the data into R. Here's how you get to the dataset: 
 
 ```{r}
+# Insert screenshot -------------------------------------
+```
+
+- From the district's dashboard page, navigate to the metric you want to explore
+- Click on the five-by-five link 
+- Click on the View Detailed Data link 
+- Download the text file by clicking on the Download Data link 
+
+# Clearer Column Names Helps Readability 
+
+Here's what the math dataset looks like without any changes: 
+
+```{r echo=FALSE, message=FALSE}
+library(tidyverse) 
+library(spedtools) 
+library(knitr)
+```
+
+```{r warning=FALSE}
 math <- read_tsv("https://query.data.world/s/ShZJAPpHw2DA4dkGvoTKU6xzSb5A61", 
                  # Show the whole CDS code instead of scientific format
-                 col_types = cols(cds = col_character())) 
-
-glimpse(math)
+                 col_types = cols(cds = col_character()))
+math
 ```
 
-[file layout](https://www.cde.ca.gov/ta/ac/cm/mathgr38fall17.asp) 
+Notice that the column names aren't immediately clear about what they're describing. For example, the sizes of the student subgroups are kept in a column called `currdenom`. The average distance from score level of three is `currstatus`. 
+
+It's super important to take the time to review the [file layout](https://www.cde.ca.gov/ta/ac/cm/mathgr38fall17.asp), which provides definitions for every column name. It's not the most fun reading, but I think you'll find that you can help people answer questions better when you are confident you understand precisely what the numbers mean. Once you have a good understanding of what each column means, you can drop the column names you don't need for your analysis and rename the ones that you keep. Let's drop all columns except the school name, subgroup name, size of the subgroup, average distance from three, and the change from last year: 
 
 ```{r}
 math <- math %>% 
+  # Filter on just schools, not whole district counts 
   filter(rtype == "S") %>% 
-  select(cds, school = schoolname, subgroup = studentgroup, student_count = currdenom, avg_dfrom3 = currstatus)
-
+  select(school = schoolname, 
+         subgroup = studentgroup, 
+         subgroup_size = currdenom, 
+         avg_dfrom3 = currstatus, 
+         change)
 math
 ```
+
+Much better! Now we have only the columns we want, renamed so they're clearer: 
+
+- `school`: name of the school 
+- `subgroup`: name of the subgroup 
+- `subgroup_size`: number of students in the subgroup 
+- `avg_dfrom3`: average distance from test score level three for each subgroup 
+- `change`: change in distance from three score compared to last year 
+
+There's one more thing I want to do here. It's hard to see right away which subgroups I'm looking at because the dataset uses subgroup codes instead of actual names. *We want to use our brain power more to ask and answer questions and less to remember what codes mean*, so let's change that. I built a handy tool in my [spedtools R package](https://github.com/restrellado/spedtools) that will quickly rename the codes to actual words. 
 
 ```{r}
-math <- math %>% 
-  mutate(subgroup = convert_subgroup(subgroup)) 
-
-math
+(math <- math %>% mutate(subgroup = convert_subgroup(subgroup)))
 ```
 
+# Exploring a Clean Dataset 
+
+Now that we have just the columns we want to explore and actual subgroup names instead of codes, we can start exploring the dataset faster with a series of quick exploratory questions. We just want to indulge a little curiosity and ask quick questions and answers to get the analytic juices going. **My favorite way to do this is to encourage lots of questions and to provide rapid answers so the process feels casual and conversational, rather than writing up a list of questions and taking days to respond with the data.** Having a clean dataset ready and being fast at the keyboard helps us do this. Here are some examples: 
+
+**How different are the student subgroups in size?** 
+
+Sometimes you want to get a sense of how big the student subgroups are, especially when dealing with metrics like "average distance of three", the results of which are influenced in some part by how big the group is. Here are the top ten biggest subgroup student counts in Palo Alto, along with their school. 
+
+```{r}
+math %>% 
+  select(-c(avg_dfrom3, change)) %>% 
+  filter(subgroup != "All Students") %>% 
+  filter(min_rank(desc(subgroup_size)) <= 10) %>% 
+  arrange(desc(subgroup_size))
+```
+
+Not surprisingly, the secondary schools take up most slots, as you'd expect from schools with higher enrollment. It's important to note here that not all of these groups are mutually exclusive. For example, it's possible for a student to be counted both in the `White` category and in the `English Only` category. 
+
+**Where were the highest performing English Learner groups?**
+
+Two questions that seem to come up a lot when I work with school staff are 
+
+- Who are the students behind the numbers? 
+- Who do we know that's doing a great job at this? 
+
+One way to answer the second question is to transform the data so it shows you the schools with the top ten average distance from 3 for the subgroup you're interested in. Here's that transformation for English learners: 
+
+```{r}
+math %>% 
+  select(-c(subgroup_size, change)) %>% 
+  filter(subgroup == "English Learner") %>% 
+  filter(min_rank(desc(avg_dfrom3)) <= 10) %>% 
+  arrange(desc(avg_dfrom3))
+``` 
+
+Now school staff can call colleagues at other schools to get a conversation going about what's been working well. 
+
+**Which schools had the highest increases from last year in each subgroup?** 
+
+We can keep the conversation going by looking at the top two positive change scores for every subgroup. These are the schools that had the best increases in the distance from three score from last year. Now schools can get a sense of where to start calling if they want to hear about strategies, interventions, or initiatives that their colleagues are using to be successful. 
+
+```{r}
+math %>% 
+  select(-subgroup_size) %>% 
+  # Remove the All Students category so we're just looking at subgroups
+  filter(subgroup != "All Students", change > 0) %>%
+  group_by(subgroup) %>% 
+  filter(min_rank(desc(change)) <= 2) %>% 
+  select(subgroup, school, change) %>% 
+  arrange(subgroup)
+```
+
+# Conclusion 
+
+The California School Dashboard website makes much of its underlying data available for us to explore. It's worthwhile to import and clean that data so when the exploration starts, school staff can rapidly ask questions and get answers in a way that organically moves the conversation towards the important questions. Next we'll look at ways to explore the data further through data visualization. 
