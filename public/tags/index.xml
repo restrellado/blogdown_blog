@@ -6,15 +6,24 @@
     <description>Recent content in Tags on Ryan Estrellado</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright &amp;copy; 2017 - Ryan Estrellado</copyright>
-    <lastBuildDate>Sat, 27 Jan 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 28 Jan 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Casemis</title>
+      <link>/tags/casemis/</link>
+      <pubDate>Sun, 28 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/tags/casemis/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>School_data</title>
       <link>/tags/school_data/</link>
-      <pubDate>Sat, 27 Jan 2018 00:00:00 +0000</pubDate>
+      <pubDate>Sun, 28 Jan 2018 00:00:00 +0000</pubDate>
       
       <guid>/tags/school_data/</guid>
       <description></description>

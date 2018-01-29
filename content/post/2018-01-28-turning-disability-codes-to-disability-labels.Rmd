@@ -1,0 +1,79 @@
+---
+title: Turning Disability Codes to Disability Labels
+author: Ryan Estrellado
+date: '2018-01-28'
+slug: turning-disability-codes-to-disability-labels
+categories: []
+tags:
+  - school_data
+  - CASEMIS
+draft: TRUE
+---
+
+Public education data 
+
+```{r message=FALSE}
+library(tidyverse)
+```
+
+```{r}
+# Names for disability vector
+dis_codes <- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
+
+# Make dataset
+df <- tibble(
+  student      = as.character(sample(111111:999999, 1000)), 
+  disability_1 = as.character(sample(dis_codes, 1000, replace = TRUE)), 
+  disability_2 = as.character(sample(dis_codes, 1000, replace = TRUE)))
+df
+```
+
+```{r}
+# Elements of disability label vector
+dis_desc <- c(
+  "none", "intellectual disability", "hard of hearing", "deafness", 
+  "speech and language impairment", "visual impairment", 
+  "emotional disturbance", "orthopedic impairment","other health impairment", 
+  "established medical disability", "specific learning disability", 
+  "deaf-blindness", "multiple disabilities", "autism", "traumatic brain injury"
+)
+```
+
+```{r}
+# Create named vector
+(dis_lookup <- set_names(dis_desc, nm = dis_codes))
+```
+
+```{r}
+df %>% 
+  mutate(disability_1 = dis_lookup[disability_1])
+```
+
+```{r}
+convert_dis <- function(x) {
+  # Names for disability vector
+  dis_codes <- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
+
+  # Elements of disability vector
+  dis_desc <- c(
+    "none", "intellectual disability", "hard of hearing", "deafness", 
+    "speech and language impairment", "visual impairment", 
+    "emotional disturbance", "orthopedic impairment","other health impairment", 
+    "established medical disability", "specific learning disability", 
+    "deaf-blindness", "multiple disabilities", "autism", "traumatic brain injury"
+  )
+
+  # Create named vector
+  dis_lookup <- set_names(dis_desc, nm = dis_codes)
+
+  # Create a new vector of disability descriptions
+  as.vector(dis_lookup[as.character(x)])
+}
+```
+
+```{r}
+df %>% 
+  mutate_at(vars(disability_1:disability_2), funs(convert_dis))
+```
+
+# Collect Them All in A Package 

@@ -6,10 +6,20 @@
     <description>Recent content in Posts on Ryan Estrellado</description>
     <generator>Hugo -- gohugo.io</generator>
     <copyright>Copyright &amp;copy; 2017 - Ryan Estrellado</copyright>
-    <lastBuildDate>Sat, 27 Jan 2018 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 28 Jan 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Turning Disability Codes to Disability Labels</title>
+      <link>/post/turning-disability-codes-to-disability-labels/</link>
+      <pubDate>Sun, 28 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/post/turning-disability-codes-to-disability-labels/</guid>
+      <description>Public education data
+library(tidyverse) # Names for disability vector dis_codes &amp;lt;- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10)) # Make dataset df &amp;lt;- tibble( student = as.</description>
+    </item>
     
     <item>
       <title>California School Dashboards Part 2: Visualizing the Data</title>

@@ -1,0 +1,119 @@
+---
+title: Turning Disability Codes to Disability Labels
+author: Ryan Estrellado
+date: '2018-01-28'
+slug: turning-disability-codes-to-disability-labels
+categories: []
+tags:
+  - school_data
+  - CASEMIS
+draft: TRUE
+---
+
+
+
+<p>Public education data</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code># Names for disability vector
+dis_codes &lt;- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
+
+# Make dataset
+df &lt;- tibble(
+  student      = as.character(sample(111111:999999, 1000)), 
+  disability_1 = as.character(sample(dis_codes, 1000, replace = TRUE)), 
+  disability_2 = as.character(sample(dis_codes, 1000, replace = TRUE)))
+df</code></pre>
+<pre><code>## # A tibble: 1,000 x 3
+##    student disability_1 disability_2
+##    &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;       
+##  1 582742  290          280         
+##  2 518239  230          220         
+##  3 218606  250          240         
+##  4 748460  281          260         
+##  5 528129  250          330         
+##  6 505739  250          280         
+##  7 878479  240          310         
+##  8 429343  310          330         
+##  9 831494  240          310         
+## 10 656547  281          260         
+## # ... with 990 more rows</code></pre>
+<pre class="r"><code># Elements of disability label vector
+dis_desc &lt;- c(
+  &quot;none&quot;, &quot;intellectual disability&quot;, &quot;hard of hearing&quot;, &quot;deafness&quot;, 
+  &quot;speech and language impairment&quot;, &quot;visual impairment&quot;, 
+  &quot;emotional disturbance&quot;, &quot;orthopedic impairment&quot;,&quot;other health impairment&quot;, 
+  &quot;established medical disability&quot;, &quot;specific learning disability&quot;, 
+  &quot;deaf-blindness&quot;, &quot;multiple disabilities&quot;, &quot;autism&quot;, &quot;traumatic brain injury&quot;
+)</code></pre>
+<pre class="r"><code># Create named vector
+(dis_lookup &lt;- set_names(dis_desc, nm = dis_codes))</code></pre>
+<pre><code>##                              200                              210 
+##                           &quot;none&quot;        &quot;intellectual disability&quot; 
+##                              220                              230 
+##                &quot;hard of hearing&quot;                       &quot;deafness&quot; 
+##                              240                              250 
+## &quot;speech and language impairment&quot;              &quot;visual impairment&quot; 
+##                              260                              270 
+##          &quot;emotional disturbance&quot;          &quot;orthopedic impairment&quot; 
+##                              280                              281 
+##        &quot;other health impairment&quot; &quot;established medical disability&quot; 
+##                              290                              300 
+##   &quot;specific learning disability&quot;                 &quot;deaf-blindness&quot; 
+##                              310                              320 
+##          &quot;multiple disabilities&quot;                         &quot;autism&quot; 
+##                              330 
+##         &quot;traumatic brain injury&quot;</code></pre>
+<pre class="r"><code>df %&gt;% 
+  mutate(disability_1 = dis_lookup[disability_1])</code></pre>
+<pre><code>## # A tibble: 1,000 x 3
+##    student disability_1                   disability_2
+##    &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt;       
+##  1 582742  specific learning disability   280         
+##  2 518239  deafness                       220         
+##  3 218606  visual impairment              240         
+##  4 748460  established medical disability 260         
+##  5 528129  visual impairment              330         
+##  6 505739  visual impairment              280         
+##  7 878479  speech and language impairment 310         
+##  8 429343  multiple disabilities          330         
+##  9 831494  speech and language impairment 310         
+## 10 656547  established medical disability 260         
+## # ... with 990 more rows</code></pre>
+<pre class="r"><code>convert_dis &lt;- function(x) {
+  # Names for disability vector
+  dis_codes &lt;- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
+
+  # Elements of disability vector
+  dis_desc &lt;- c(
+    &quot;none&quot;, &quot;intellectual disability&quot;, &quot;hard of hearing&quot;, &quot;deafness&quot;, 
+    &quot;speech and language impairment&quot;, &quot;visual impairment&quot;, 
+    &quot;emotional disturbance&quot;, &quot;orthopedic impairment&quot;,&quot;other health impairment&quot;, 
+    &quot;established medical disability&quot;, &quot;specific learning disability&quot;, 
+    &quot;deaf-blindness&quot;, &quot;multiple disabilities&quot;, &quot;autism&quot;, &quot;traumatic brain injury&quot;
+  )
+
+  # Create named vector
+  dis_lookup &lt;- set_names(dis_desc, nm = dis_codes)
+
+  # Create a new vector of disability descriptions
+  as.vector(dis_lookup[as.character(x)])
+}</code></pre>
+<pre class="r"><code>df %&gt;% 
+  mutate_at(vars(disability_1:disability_2), funs(convert_dis))</code></pre>
+<pre><code>## # A tibble: 1,000 x 3
+##    student disability_1                   disability_2                  
+##    &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt;                         
+##  1 582742  specific learning disability   other health impairment       
+##  2 518239  deafness                       hard of hearing               
+##  3 218606  visual impairment              speech and language impairment
+##  4 748460  established medical disability emotional disturbance         
+##  5 528129  visual impairment              traumatic brain injury        
+##  6 505739  visual impairment              other health impairment       
+##  7 878479  speech and language impairment multiple disabilities         
+##  8 429343  multiple disabilities          traumatic brain injury        
+##  9 831494  speech and language impairment multiple disabilities         
+## 10 656547  established medical disability emotional disturbance         
+## # ... with 990 more rows</code></pre>
+<div id="collect-them-all-in-a-package" class="section level1">
+<h1>Collect Them All in A Package</h1>
+</div>
