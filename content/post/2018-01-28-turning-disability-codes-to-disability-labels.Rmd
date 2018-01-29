@@ -1,16 +1,58 @@
 ---
-title: Turning Disability Codes to Disability Labels
+title: Turning Dataset Codes to Words With R
 author: Ryan Estrellado
 date: '2018-01-28'
-slug: turning-disability-codes-to-disability-labels
+slug: turning-dataset-codes-to-words
 categories: []
 tags:
   - school_data
   - CASEMIS
+  - tidyverse
 draft: TRUE
 ---
 
-Public education data 
+*Note: I include a lot of code in this post so my fellow data scientists can either learn from it or give me feedback about how to make it better. It's totally ok to skip over all that and just check out the data. The data immediately follow the code and have `##` marks in them.*
+
+# Introduction: Labels Are Nicer Than Codes 
+
+I do a lot of work with the same public education datasets, like the [CASEMIS dataset](https://www.cde.ca.gov/sp/se/ds/casemis.asp) and the [California School Dashboard](https://www.caschooldashboard.org/#/Home) datasets. These both have columns that use codes instead of labels. This means that you will never see the words "autism" in a CASEMIS dataset. Instead, you'll see `320` among a sea of other disability codes. I'm a big advocate of sharing as much information and insight as we can about our school data, but that's hard if your audience has to refer to their technical assistance guide to figure out what a code means. Consider the following plot, which takes a count of disabilities from a fake dataset: 
+
+```{r echo=FALSE, message=FALSE}
+library(tidyverse)
+set.seed(320)
+
+# Names for disability vector
+dis_codes <- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
+
+# Make dataset
+tibble(
+  student      = as.character(sample(111111:999999, 1000)), 
+  disability_1 = as.character(sample(dis_codes, 1000, replace = TRUE)), 
+  disability_2 = as.character(sample(dis_codes, 1000, replace = TRUE))
+  ) %>%
+  ggplot(data = .) + 
+  geom_bar(fill = "light pink", alpha = .75, aes(x = reorder(
+    disability_1, disability_1, function(x) {length(x)}
+    ))) + 
+  coord_flip() + 
+  labs(title    = "Count of Disability", 
+       subtitle = "Fake Dataset", 
+       x        = "Disability Code")
+```
+
+I can just feel the insight slipping away as your audience flips through their manuals to figure out which disabilities `210` and `320` are! 
+
+So what can we do about this? In the past, I've tried one of three solutions in my spreadsheets: 
+
+- Copy and paste a disability label over each disability code 
+- Find and replace each disability code with a disability label 
+- Just leave the disability codes as they are and deal with it 
+
+These solutions are ok, but they introduce a lot of human error and tend to be really slow, particularly if you're working with datasets that have thousands and thousands of records. Once I started complimenting my spreadsheet work with [programming in R](https://www.r-project.org/about.html), I learned how to swap those codes for labels pretty quickly. Here's how that works!
+
+# 1. Use a Named Vector to Transform Codes to Words 
+
+First we'll make a pretend dataset of students, primary disability, and secondary disability. It's the same pretend dataset we used to make the plot above. We'll make a thousand records, since it's a little easier to see the benefit of this technique over a larger dataset. 
 
 ```{r message=FALSE}
 library(tidyverse)
@@ -21,12 +63,16 @@ library(tidyverse)
 dis_codes <- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
 
 # Make dataset
+set.seed(200)
+
 df <- tibble(
   student      = as.character(sample(111111:999999, 1000)), 
   disability_1 = as.character(sample(dis_codes, 1000, replace = TRUE)), 
   disability_2 = as.character(sample(dis_codes, 1000, replace = TRUE)))
 df
 ```
+
+Next we'll make a vector of our disability names. These are the names we'll be replacing the codes with later. These labels are the exact ones you'll see in the [California Education Code](https://www.cde.ca.gov/ta/tg/ca/disablecodes.asp) and will correspond with the disability codes described in the [CASEMIS technical assistance guide](https://www.cde.ca.gov/sp/se/ds/casemis.asp). 
 
 ```{r}
 # Elements of disability label vector
@@ -39,15 +85,25 @@ dis_desc <- c(
 )
 ```
 
+Then we'll use `set_names` from `purrr` to name each of the disability labels with their corresponding code. Now we have a named vector that looks like this: 
+
 ```{r}
 # Create named vector
 (dis_lookup <- set_names(dis_desc, nm = dis_codes))
 ```
 
+This is the point where things start to feel like magic! We'll take our new named vector and use `mutate` to transform the codes in `disability_1` into actual disability labels. 
+
 ```{r}
 df %>% 
   mutate(disability_1 = dis_lookup[disability_1])
 ```
+
+Now we can actually look at the `disability_1` column and understand what it means. But what if you have more than one disability column that needs to be transformed? 
+
+# 2. Use a Function and purrr to Convert More Than One Column of Codes 
+
+The CASEMIS dataset, like other public education datasets, has more than one column that uses codes instead of labels. For example, there are two disability code columns: `DISABILIT1` and `DISABILIT2`. One solution is to change each column separately, but let's push for a more efficient solution. We can take our named vector and build a function out of it that takes a vector of disability codes and converts it into a column of disability labels. 
 
 ```{r}
 convert_dis <- function(x) {
@@ -71,9 +127,28 @@ convert_dis <- function(x) {
 }
 ```
 
+Now let's use `mutate_at` to call that function on both of the disability columns. 
+
 ```{r}
 df %>% 
   mutate_at(vars(disability_1:disability_2), funs(convert_dis))
 ```
 
+![](https://media.giphy.com/media/mz1kJeDVueKC4/giphy.gif)
+
 # Collect Them All in A Package 
+
+I had so much fun making that work that I started taking notice anytime there were chances to create functions that convert codes to labels. As soon as I had a second function, I built an [R package called `spedtools`](https://github.com/restrellado/spedtools) to house them so I could just load the package at the top of any CASEMIS analysis I do. Now I don't need to rebuild the functions over and over again and I can get my data transformed for analysis with some compact and readable code. Here's what that looks like: 
+
+```{r message=FALSE}
+library(spedtools) 
+
+df %>% 
+  mutate_at(vars(disability_1:disability_2), funs(convert_dis))
+```
+
+![*Build an R package around all your renaming functions and load it up before every analysis*](/images/spedtools_pic.png) 
+
+# Conclusion 
+
+Using programming as a compliment to my work in spreadsheets changed my mindset on tasks I find myself doing over and over again. If there's something I know I'll be doing many times, like converting disability codes to disability labels, I prefer to do a little more work up front if it helps me move faster and more accurately in the long run. That way I'm spending more time sharing useful information to data consumers and less time cleaning data. 

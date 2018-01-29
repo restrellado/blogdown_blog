@@ -1,23 +1,42 @@
 ---
-title: Turning Disability Codes to Disability Labels
+title: Turning Dataset Codes to Words With R
 author: Ryan Estrellado
 date: '2018-01-28'
-slug: turning-disability-codes-to-disability-labels
+slug: turning-dataset-codes-to-words
 categories: []
 tags:
   - school_data
   - CASEMIS
+  - tidyverse
 draft: TRUE
 ---
 
 
 
-<p>Public education data</p>
+<p><em>Note: I include a lot of code in this post so my fellow data scientists can either learn from it or give me feedback about how to make it better. It’s totally ok to skip over all that and just check out the data. The data immediately follow the code and have <code>##</code> marks in them.</em></p>
+<div id="introduction-labels-are-nicer-than-codes" class="section level1">
+<h1>Introduction: Labels Are Nicer Than Codes</h1>
+<p>I do a lot of work with the same public education datasets, like the <a href="https://www.cde.ca.gov/sp/se/ds/casemis.asp">CASEMIS dataset</a> and the <a href="https://www.caschooldashboard.org/#/Home">California School Dashboard</a> datasets. These both have columns that use codes instead of labels. This means that you will never see the words “autism” in a CASEMIS dataset. Instead, you’ll see <code>320</code> among a sea of other disability codes. I’m a big advocate of sharing as much information and insight as we can about our school data, but that’s hard if your audience has to refer to their technical assistance guide to figure out what a code means. Consider the following plot, which takes a count of disabilities from a fake dataset:</p>
+<p><img src="/post/2018-01-28-turning-disability-codes-to-disability-labels_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>I can just feel the insight slipping away as your audience flips through their manuals to figure out which disabilities <code>210</code> and <code>320</code> are!</p>
+<p>So what can we do about this? In the past, I’ve tried one of three solutions in my spreadsheets:</p>
+<ul>
+<li>Copy and paste a disability label over each disability code</li>
+<li>Find and replace each disability code with a disability label</li>
+<li>Just leave the disability codes as they are and deal with it</li>
+</ul>
+<p>These solutions are ok, but they introduce a lot of human error and tend to be really slow, particularly if you’re working with datasets that have thousands and thousands of records. Once I started complimenting my spreadsheet work with <a href="https://www.r-project.org/about.html">programming in R</a>, I learned how to swap those codes for labels pretty quickly. Here’s how that works!</p>
+</div>
+<div id="use-a-named-vector-to-transform-codes-to-words" class="section level1">
+<h1>1. Use a Named Vector to Transform Codes to Words</h1>
+<p>First we’ll make a pretend dataset of students, primary disability, and secondary disability. It’s the same pretend dataset we used to make the plot above. We’ll make a thousand records, since it’s a little easier to see the benefit of this technique over a larger dataset.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
 <pre class="r"><code># Names for disability vector
 dis_codes &lt;- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
 
 # Make dataset
+set.seed(200)
+
 df &lt;- tibble(
   student      = as.character(sample(111111:999999, 1000)), 
   disability_1 = as.character(sample(dis_codes, 1000, replace = TRUE)), 
@@ -26,17 +45,18 @@ df</code></pre>
 <pre><code>## # A tibble: 1,000 x 3
 ##    student disability_1 disability_2
 ##    &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;       
-##  1 582742  290          280         
-##  2 518239  230          220         
-##  3 218606  250          240         
-##  4 748460  281          260         
-##  5 528129  250          330         
-##  6 505739  250          280         
-##  7 878479  240          310         
-##  8 429343  310          330         
-##  9 831494  240          310         
-## 10 656547  281          260         
+##  1 585575  250          300         
+##  2 630012  260          281         
+##  3 635179  200          300         
+##  4 725366  270          310         
+##  5 704291  230          310         
+##  6 857145  260          200         
+##  7 743640  330          310         
+##  8 196889  281          281         
+##  9 576728  200          220         
+## 10 320309  240          220         
 ## # ... with 990 more rows</code></pre>
+<p>Next we’ll make a vector of our disability names. These are the names we’ll be replacing the codes with later. These labels are the exact ones you’ll see in the <a href="https://www.cde.ca.gov/ta/tg/ca/disablecodes.asp">California Education Code</a> and will correspond with the disability codes described in the <a href="https://www.cde.ca.gov/sp/se/ds/casemis.asp">CASEMIS technical assistance guide</a>.</p>
 <pre class="r"><code># Elements of disability label vector
 dis_desc &lt;- c(
   &quot;none&quot;, &quot;intellectual disability&quot;, &quot;hard of hearing&quot;, &quot;deafness&quot;, 
@@ -45,6 +65,7 @@ dis_desc &lt;- c(
   &quot;established medical disability&quot;, &quot;specific learning disability&quot;, 
   &quot;deaf-blindness&quot;, &quot;multiple disabilities&quot;, &quot;autism&quot;, &quot;traumatic brain injury&quot;
 )</code></pre>
+<p>Then we’ll use <code>set_names</code> from <code>purrr</code> to name each of the disability labels with their corresponding code. Now we have a named vector that looks like this:</p>
 <pre class="r"><code># Create named vector
 (dis_lookup &lt;- set_names(dis_desc, nm = dis_codes))</code></pre>
 <pre><code>##                              200                              210 
@@ -63,22 +84,28 @@ dis_desc &lt;- c(
 ##          &quot;multiple disabilities&quot;                         &quot;autism&quot; 
 ##                              330 
 ##         &quot;traumatic brain injury&quot;</code></pre>
+<p>This is the point where things start to feel like magic! We’ll take our new named vector and use <code>mutate</code> to transform the codes in <code>disability_1</code> into actual disability labels.</p>
 <pre class="r"><code>df %&gt;% 
   mutate(disability_1 = dis_lookup[disability_1])</code></pre>
 <pre><code>## # A tibble: 1,000 x 3
 ##    student disability_1                   disability_2
 ##    &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt;       
-##  1 582742  specific learning disability   280         
-##  2 518239  deafness                       220         
-##  3 218606  visual impairment              240         
-##  4 748460  established medical disability 260         
-##  5 528129  visual impairment              330         
-##  6 505739  visual impairment              280         
-##  7 878479  speech and language impairment 310         
-##  8 429343  multiple disabilities          330         
-##  9 831494  speech and language impairment 310         
-## 10 656547  established medical disability 260         
+##  1 585575  visual impairment              300         
+##  2 630012  emotional disturbance          281         
+##  3 635179  none                           300         
+##  4 725366  orthopedic impairment          310         
+##  5 704291  deafness                       310         
+##  6 857145  emotional disturbance          200         
+##  7 743640  traumatic brain injury         310         
+##  8 196889  established medical disability 281         
+##  9 576728  none                           220         
+## 10 320309  speech and language impairment 220         
 ## # ... with 990 more rows</code></pre>
+<p>Now we can actually look at the <code>disability_1</code> column and understand what it means. But what if you have more than one disability column that needs to be transformed?</p>
+</div>
+<div id="use-a-function-and-purrr-to-convert-more-than-one-column-of-codes" class="section level1">
+<h1>2. Use a Function and purrr to Convert More Than One Column of Codes</h1>
+<p>The CASEMIS dataset, like other public education datasets, has more than one column that uses codes instead of labels. For example, there are two disability code columns: <code>DISABILIT1</code> and <code>DISABILIT2</code>. One solution is to change each column separately, but let’s push for a more efficient solution. We can take our named vector and build a function out of it that takes a vector of disability codes and converts it into a column of disability labels.</p>
 <pre class="r"><code>convert_dis &lt;- function(x) {
   # Names for disability vector
   dis_codes &lt;- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
@@ -98,22 +125,55 @@ dis_desc &lt;- c(
   # Create a new vector of disability descriptions
   as.vector(dis_lookup[as.character(x)])
 }</code></pre>
+<p>Now let’s use <code>mutate_at</code> to call that function on both of the disability columns.</p>
 <pre class="r"><code>df %&gt;% 
   mutate_at(vars(disability_1:disability_2), funs(convert_dis))</code></pre>
 <pre><code>## # A tibble: 1,000 x 3
 ##    student disability_1                   disability_2                  
 ##    &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt;                         
-##  1 582742  specific learning disability   other health impairment       
-##  2 518239  deafness                       hard of hearing               
-##  3 218606  visual impairment              speech and language impairment
-##  4 748460  established medical disability emotional disturbance         
-##  5 528129  visual impairment              traumatic brain injury        
-##  6 505739  visual impairment              other health impairment       
-##  7 878479  speech and language impairment multiple disabilities         
-##  8 429343  multiple disabilities          traumatic brain injury        
-##  9 831494  speech and language impairment multiple disabilities         
-## 10 656547  established medical disability emotional disturbance         
+##  1 585575  visual impairment              deaf-blindness                
+##  2 630012  emotional disturbance          established medical disability
+##  3 635179  none                           deaf-blindness                
+##  4 725366  orthopedic impairment          multiple disabilities         
+##  5 704291  deafness                       multiple disabilities         
+##  6 857145  emotional disturbance          none                          
+##  7 743640  traumatic brain injury         multiple disabilities         
+##  8 196889  established medical disability established medical disability
+##  9 576728  none                           hard of hearing               
+## 10 320309  speech and language impairment hard of hearing               
 ## # ... with 990 more rows</code></pre>
+<div class="figure">
+<img src="https://media.giphy.com/media/mz1kJeDVueKC4/giphy.gif" />
+
+</div>
+</div>
 <div id="collect-them-all-in-a-package" class="section level1">
 <h1>Collect Them All in A Package</h1>
+<p>I had so much fun making that work that I started taking notice anytime there were chances to create functions that convert codes to labels. As soon as I had a second function, I built an <a href="https://github.com/restrellado/spedtools">R package called <code>spedtools</code></a> to house them so I could just load the package at the top of any CASEMIS analysis I do. Now I don’t need to rebuild the functions over and over again and I can get my data transformed for analysis with some compact and readable code. Here’s what that looks like:</p>
+<pre class="r"><code>library(spedtools) 
+
+df %&gt;% 
+  mutate_at(vars(disability_1:disability_2), funs(convert_dis))</code></pre>
+<pre><code>## # A tibble: 1,000 x 3
+##    student disability_1                   disability_2                  
+##    &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt;                         
+##  1 585575  visual impairment              deaf-blindness                
+##  2 630012  emotional disturbance          established medical disability
+##  3 635179  none                           deaf-blindness                
+##  4 725366  orthopedic impairment          multiple disabilities         
+##  5 704291  deafness                       multiple disabilities         
+##  6 857145  emotional disturbance          none                          
+##  7 743640  traumatic brain injury         multiple disabilities         
+##  8 196889  established medical disability established medical disability
+##  9 576728  none                           hard of hearing               
+## 10 320309  speech and language impairment hard of hearing               
+## # ... with 990 more rows</code></pre>
+<div class="figure">
+<img src="/images/spedtools_pic.png" alt="Build an R package around all your renaming functions and load it up before every analysis" />
+<p class="caption"><em>Build an R package around all your renaming functions and load it up before every analysis</em></p>
+</div>
+</div>
+<div id="conclusion" class="section level1">
+<h1>Conclusion</h1>
+<p>Using programming as a compliment to my work in spreadsheets changed my mindset on tasks I find myself doing over and over again. If there’s something I know I’ll be doing many times, like converting disability codes to disability labels, I prefer to do a little more work up front if it helps me move faster and more accurately in the long run. That way I’m spending more time sharing useful information to data consumers and less time cleaning data.</p>
 </div>

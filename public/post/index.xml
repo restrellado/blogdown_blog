@@ -12,13 +12,12 @@
     
     
     <item>
-      <title>Turning Disability Codes to Disability Labels</title>
-      <link>/post/turning-disability-codes-to-disability-labels/</link>
+      <title>Turning Dataset Codes to Words With R</title>
+      <link>/post/turning-dataset-codes-to-words/</link>
       <pubDate>Sun, 28 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/post/turning-disability-codes-to-disability-labels/</guid>
-      <description>Public education data
-library(tidyverse) # Names for disability vector dis_codes &amp;lt;- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10)) # Make dataset df &amp;lt;- tibble( student = as.</description>
+      <guid>/post/turning-dataset-codes-to-words/</guid>
+      <description>Note: I include a lot of code in this post so my fellow data scientists can either learn from it or give me feedback about how to make it better. It’s totally ok to skip over all that and just check out the data.</description>
     </item>
     
     <item>
