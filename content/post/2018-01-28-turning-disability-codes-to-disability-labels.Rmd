@@ -135,7 +135,7 @@ df %>%
 
 ![](https://media.giphy.com/media/mz1kJeDVueKC4/giphy.gif)
 
-# Collect Them All in A Package 
+# 3. Collect Them All in A Package 
 
 I had so much fun making that work that I started taking notice anytime there were chances to create functions that convert codes to labels. As soon as I had a second function, I built an [R package called `spedtools`](https://github.com/restrellado/spedtools) to house them so I could just load the package at the top of any CASEMIS analysis I do. Now I don't need to rebuild the functions over and over again and I can get my data transformed for analysis with some compact and readable code. Here's what that looks like: 
 
