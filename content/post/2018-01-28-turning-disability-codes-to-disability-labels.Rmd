@@ -100,7 +100,7 @@ df %>%
 
 Now we can actually look at the `disability_1` column and understand what it means. But what if you have more than one disability column that needs to be transformed? 
 
-# 2. Use a Function and purrr to Convert More Than One Column of Codes 
+# 2. Use a Function to Convert More Than One Column of Codes 
 
 The CASEMIS dataset, like other public education datasets, has more than one column that uses codes instead of labels. For example, there are two disability code columns: `DISABILIT1` and `DISABILIT2`. One solution is to change each column separately, but let's push for a more efficient solution. We can take our named vector and build a function out of it that takes a vector of disability codes and converts it into a column of disability labels. 
 
