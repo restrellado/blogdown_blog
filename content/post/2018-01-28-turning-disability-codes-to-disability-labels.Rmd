@@ -35,7 +35,7 @@ tibble(
     ))) + 
   coord_flip() + 
   labs(title    = "Count of Disability", 
-       subtitle = "Fake Dataset", 
+       subtitle = "Example (not real data)", 
        x        = "Disability Code")
 ```
 
