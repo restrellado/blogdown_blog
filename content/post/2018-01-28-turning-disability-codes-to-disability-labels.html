@@ -1,5 +1,5 @@
 ---
-title: Turning Dataset Codes to Words With R
+title: "Turning Dataset Codes to Words With R"
 author: Ryan Estrellado
 date: '2018-01-28'
 slug: turning-dataset-codes-to-words
@@ -37,23 +37,22 @@ dis_codes &lt;- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
 set.seed(200)
 
 df &lt;- tibble(
-  student      = as.character(sample(111111:999999, 1000)), 
   disability_1 = as.character(sample(dis_codes, 1000, replace = TRUE)), 
   disability_2 = as.character(sample(dis_codes, 1000, replace = TRUE)))
 df</code></pre>
-<pre><code>## # A tibble: 1,000 x 3
-##    student disability_1 disability_2
-##    &lt;chr&gt;   &lt;chr&gt;        &lt;chr&gt;       
-##  1 585575  250          300         
-##  2 630012  260          281         
-##  3 635179  200          300         
-##  4 725366  270          310         
-##  5 704291  230          310         
-##  6 857145  260          200         
-##  7 743640  330          310         
-##  8 196889  281          281         
-##  9 576728  200          220         
-## 10 320309  240          220         
+<pre><code>## # A tibble: 1,000 x 2
+##    disability_1 disability_2
+##    &lt;chr&gt;        &lt;chr&gt;       
+##  1 280          250         
+##  2 280          260         
+##  3 280          200         
+##  4 290          270         
+##  5 290          230         
+##  6 310          260         
+##  7 290          330         
+##  8 210          281         
+##  9 270          200         
+## 10 230          240         
 ## # ... with 990 more rows</code></pre>
 <p>Next we’ll make a vector of our disability names. These are the names we’ll be replacing the codes with later. These labels are the exact ones you’ll see in the <a href="https://www.cde.ca.gov/ta/tg/ca/disablecodes.asp">California Education Code</a> and will correspond with the disability codes described in the <a href="https://www.cde.ca.gov/sp/se/ds/casemis.asp">CASEMIS technical assistance guide</a>.</p>
 <pre class="r"><code># Elements of disability label vector
@@ -86,19 +85,19 @@ dis_desc &lt;- c(
 <p>This is the point where things start to feel like magic! We’ll take our new named vector and use <code>mutate</code> to transform the codes in <code>disability_1</code> into actual disability labels.</p>
 <pre class="r"><code>df %&gt;% 
   mutate(disability_1 = dis_lookup[disability_1])</code></pre>
-<pre><code>## # A tibble: 1,000 x 3
-##    student disability_1                   disability_2
-##    &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt;       
-##  1 585575  visual impairment              300         
-##  2 630012  emotional disturbance          281         
-##  3 635179  none                           300         
-##  4 725366  orthopedic impairment          310         
-##  5 704291  deafness                       310         
-##  6 857145  emotional disturbance          200         
-##  7 743640  traumatic brain injury         310         
-##  8 196889  established medical disability 281         
-##  9 576728  none                           220         
-## 10 320309  speech and language impairment 220         
+<pre><code>## # A tibble: 1,000 x 2
+##    disability_1                 disability_2
+##    &lt;chr&gt;                        &lt;chr&gt;       
+##  1 other health impairment      250         
+##  2 other health impairment      260         
+##  3 other health impairment      200         
+##  4 specific learning disability 270         
+##  5 specific learning disability 230         
+##  6 multiple disabilities        260         
+##  7 specific learning disability 330         
+##  8 intellectual disability      281         
+##  9 orthopedic impairment        200         
+## 10 deafness                     240         
 ## # ... with 990 more rows</code></pre>
 <p>Now we can actually look at the <code>disability_1</code> column and understand what it means. But what if you have more than one disability column that needs to be transformed?</p>
 </div>
@@ -127,19 +126,19 @@ dis_desc &lt;- c(
 <p>Now let’s use <code>mutate_at</code> to call that function on both of the disability columns.</p>
 <pre class="r"><code>df %&gt;% 
   mutate_at(vars(disability_1:disability_2), funs(convert_dis))</code></pre>
-<pre><code>## # A tibble: 1,000 x 3
-##    student disability_1                   disability_2                  
-##    &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt;                         
-##  1 585575  visual impairment              deaf-blindness                
-##  2 630012  emotional disturbance          established medical disability
-##  3 635179  none                           deaf-blindness                
-##  4 725366  orthopedic impairment          multiple disabilities         
-##  5 704291  deafness                       multiple disabilities         
-##  6 857145  emotional disturbance          none                          
-##  7 743640  traumatic brain injury         multiple disabilities         
-##  8 196889  established medical disability established medical disability
-##  9 576728  none                           hard of hearing               
-## 10 320309  speech and language impairment hard of hearing               
+<pre><code>## # A tibble: 1,000 x 2
+##    disability_1                 disability_2                  
+##    &lt;chr&gt;                        &lt;chr&gt;                         
+##  1 other health impairment      visual impairment             
+##  2 other health impairment      emotional disturbance         
+##  3 other health impairment      none                          
+##  4 specific learning disability orthopedic impairment         
+##  5 specific learning disability deafness                      
+##  6 multiple disabilities        emotional disturbance         
+##  7 specific learning disability traumatic brain injury        
+##  8 intellectual disability      established medical disability
+##  9 orthopedic impairment        none                          
+## 10 deafness                     speech and language impairment
 ## # ... with 990 more rows</code></pre>
 <div class="figure">
 <img src="https://media.giphy.com/media/mz1kJeDVueKC4/giphy.gif" />
@@ -153,19 +152,19 @@ dis_desc &lt;- c(
 
 df %&gt;% 
   mutate_at(vars(disability_1:disability_2), funs(convert_dis))</code></pre>
-<pre><code>## # A tibble: 1,000 x 3
-##    student disability_1                   disability_2                  
-##    &lt;chr&gt;   &lt;chr&gt;                          &lt;chr&gt;                         
-##  1 585575  visual impairment              deaf-blindness                
-##  2 630012  emotional disturbance          established medical disability
-##  3 635179  none                           deaf-blindness                
-##  4 725366  orthopedic impairment          multiple disabilities         
-##  5 704291  deafness                       multiple disabilities         
-##  6 857145  emotional disturbance          none                          
-##  7 743640  traumatic brain injury         multiple disabilities         
-##  8 196889  established medical disability established medical disability
-##  9 576728  none                           hard of hearing               
-## 10 320309  speech and language impairment hard of hearing               
+<pre><code>## # A tibble: 1,000 x 2
+##    disability_1                 disability_2                  
+##    &lt;chr&gt;                        &lt;chr&gt;                         
+##  1 other health impairment      visual impairment             
+##  2 other health impairment      emotional disturbance         
+##  3 other health impairment      none                          
+##  4 specific learning disability orthopedic impairment         
+##  5 specific learning disability deafness                      
+##  6 multiple disabilities        emotional disturbance         
+##  7 specific learning disability traumatic brain injury        
+##  8 intellectual disability      established medical disability
+##  9 orthopedic impairment        none                          
+## 10 deafness                     speech and language impairment
 ## # ... with 990 more rows</code></pre>
 <div class="figure">
 <img src="/images/spedtools_pic.png" alt="Build an R package around all your renaming functions and load it up before every analysis" />

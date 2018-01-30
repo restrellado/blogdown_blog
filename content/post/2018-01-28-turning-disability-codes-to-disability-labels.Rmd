@@ -65,7 +65,6 @@ dis_codes <- c(seq(200, 280, by = 10), 281, seq(290, 330, by = 10))
 set.seed(200)
 
 df <- tibble(
-  student      = as.character(sample(111111:999999, 1000)), 
   disability_1 = as.character(sample(dis_codes, 1000, replace = TRUE)), 
   disability_2 = as.character(sample(dis_codes, 1000, replace = TRUE)))
 df
