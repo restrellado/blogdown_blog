@@ -1,7 +1,7 @@
 ---
 title: "Turning Dataset Codes to Words With R"
 image: "/static/images/dis_codes.png"
-og:description: "Labels are nicer than codes"
+description: "Labels are nicer than codes"
 url: "/post/turning-dataset-codes-to-words/"
 author: Ryan Estrellado
 date: '2018-01-28'
