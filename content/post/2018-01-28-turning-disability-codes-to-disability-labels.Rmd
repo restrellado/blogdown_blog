@@ -1,5 +1,8 @@
 ---
 title: "Turning Dataset Codes to Words With R"
+image: "/static/images/dis_codes.png"
+description: "Labels are nicer than codes"
+url: "http://ryanestrellado.netlify.com/post/turning-dataset-codes-to-words/"
 author: Ryan Estrellado
 date: '2018-01-28'
 slug: turning-dataset-codes-to-words
@@ -8,11 +11,6 @@ tags:
   - school_data
   - CASEMIS
   - tidyverse
-metadata: 
-  og:title: "Turning Dataset Codes to Words With R"
-  og:image: "/static/images/dis_codes.png" 
-  og:description: "Labels are nicer than codes" 
-  og:url: "http://ryanestrellado.netlify.com/post/turning-dataset-codes-to-words/"
 ---
 
 *Note: I include a lot of code in this post so my fellow data scientists can either learn from it or give me feedback about how to make it better. It's totally ok to skip over all that and just check out the data. The data immediately follow the code and have `##` marks in them.*
