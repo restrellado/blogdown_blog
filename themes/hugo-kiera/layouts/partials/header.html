@@ -5,7 +5,7 @@
 <head>
     <meta property="og:title" content="{{ .Title }} - {{ .Site.Title }}"/>
     <meta property="og:url" content="{{ .Permalink }}"/>
-    <meta property="og:image" content="{{.Params.image}}"/>
+    <meta property="og:image" content="{{ .Params.image }}"/>
     <meta property="og:description" content="{{ replaceRE "\n" "" (.Description | default .Summary) }}"/>
 
     <meta charset="utf-8">
