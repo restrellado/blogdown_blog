@@ -24,10 +24,10 @@ It makes use of a variety of open source projects including:
     
     <item>
       <title>Turning Dataset Codes to Words With R</title>
-      <link>/ryanestrellado.netlify.com/post/turning-dataset-codes-to-words/</link>
+      <link>/post/turning-dataset-codes-to-words/</link>
       <pubDate>Sun, 28 Jan 2018 00:00:00 +0000</pubDate>
       
-      <guid>/ryanestrellado.netlify.com/post/turning-dataset-codes-to-words/</guid>
+      <guid>/post/turning-dataset-codes-to-words/</guid>
       <description>Note: I include a lot of code in this post so my fellow data scientists can either learn from it or give me feedback about how to make it better. It’s totally ok to skip over all that and just check out the data.</description>
     </item>
     
