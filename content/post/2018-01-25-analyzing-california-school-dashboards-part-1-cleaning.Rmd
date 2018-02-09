@@ -8,7 +8,6 @@ date: '2018-01-25'
 slug: analyzing-california-school-dashboards-part-1-cleaning
 categories: []
 tags: [school_data, tidyverse]
-draft: TRUE
 ---
 
 *This is part one of a three part series where I'll be working with California School Dashboard data by cleaning, visualizaing, and exploring through modeling.* 
