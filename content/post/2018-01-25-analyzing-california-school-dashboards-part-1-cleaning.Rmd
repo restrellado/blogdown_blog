@@ -1,12 +1,17 @@
 ---
-title: 'California School Dashboards Part 1: Cleaning and Transforming'
+title: 'California School Dashboards Part 1: Cleaning the Data' 
+image: "ryanestrellado.netlify.com/static/images/math_dashboard.png"
+description: "Cleaning the California School Dashboard data to help your analysis"
+url: "post/analyzing-california-school-dashboards-part-1-cleaning/"
 author: Ryan Estrellado
 date: '2018-01-25'
 slug: analyzing-california-school-dashboards-part-1-cleaning
 categories: []
-tags: [school_data]
+tags: [school_data, tidyverse]
 draft: TRUE
 ---
+
+*This is part one of a three part series where I'll be working with California School Dashboard data by cleaning, visualizaing, and exploring through modeling.* 
 
 # Introduction: It's Ok to Skip Around 
 
@@ -30,13 +35,11 @@ We'll cover the first step here and will do the rest in later posts.
 
 # Importing the Raw Data
 
-I wanted to use a school district that had enough schools to make the exploration interesting, but not so big that we get too lost in the number of records available. I picked the Palo Alto Unified School District's math dataset, but the code will work on any of the publicly available datasets. 
+I picked a school district and did some cleaning to hide the district and school names. Every California school district's data is available on the California School Dashboard website. This demonstration will work on any of the dashboard math datasets. 
 
 The California Department of Education makes this data available on the five-by-five grid pages. First we'll bring the data into R. Here's how you get to the dataset: 
 
-```{r}
-# Insert screenshot -------------------------------------
-```
+![](/images/math_dashboard.png)
 
 - From the district's dashboard page, navigate to the metric you want to explore
 - Click on the five-by-five link 
@@ -54,15 +57,16 @@ library(knitr)
 ```
 
 ```{r warning=FALSE}
-math <- read_tsv("https://query.data.world/s/ShZJAPpHw2DA4dkGvoTKU6xzSb5A61", 
-                 # Show the whole CDS code instead of scientific format
-                 col_types = cols(cds = col_character()))
+url <- "https://raw.githubusercontent.com/restrellado/data_for_blog/master/Somedistrictmath.txt"
+
+# Show the whole CDS code instead of scientific format
+math <- read_tsv(url, col_types = cols(cds = col_character()))
 math
 ```
 
 Notice that the column names aren't immediately clear about what they're describing. For example, the sizes of the student subgroups are kept in a column called `currdenom`. The average distance from score level of three is `currstatus`. 
 
-It's super important to take the time to review the [file layout](https://www.cde.ca.gov/ta/ac/cm/mathgr38fall17.asp), which provides definitions for every column name. It's not the most fun reading, but I think you'll find that you can help people answer questions better when you are confident you understand precisely what the numbers mean. Once you have a good understanding of what each column means, you can drop the column names you don't need for your analysis and rename the ones that you keep. Let's drop all columns except the school name, subgroup name, size of the subgroup, average distance from three, and the change from last year: 
+It's super important to take the time to review the [file layout](https://www.cde.ca.gov/ta/ac/cm/mathgr38fall17.asp), which provides definitions for every column name. It's not the most fun reading, but you'll find that you can help people answer questions better when you are confident you understand precisely what the numbers mean. Once you have a good understanding of what each column means, you can drop the column names you don't need for your analysis and rename the ones that you keep. Let's drop all columns except the school name, subgroup name, size of the subgroup, average distance from three, and the change from last year: 
 
 ```{r}
 math <- math %>% 
@@ -96,7 +100,7 @@ Now that we have just the columns we want to explore and actual subgroup names i
 
 **How different are the student subgroups in size?** 
 
-Sometimes you want to get a sense of how big the student subgroups are, especially when dealing with metrics like "average distance of three", the results of which are influenced in some part by how big the group is. Here are the top ten biggest subgroup student counts in Palo Alto, along with their school. 
+Sometimes you want to get a sense of how big the student subgroups are, especially when dealing with metrics like "average distance of three", the results of which are influenced in some part by how big the group is. Here are the top ten biggest subgroup student counts in this dataset, along with their school. 
 
 ```{r}
 math %>% 
@@ -106,7 +110,7 @@ math %>%
   arrange(desc(subgroup_size))
 ```
 
-Not surprisingly, the secondary schools take up most slots, as you'd expect from schools with higher enrollment. It's important to note here that not all of these groups are mutually exclusive. For example, it's possible for a student to be counted both in the `White` category and in the `English Only` category. 
+It's important to note here that not all of these groups are mutually exclusive. For example, it's possible for a student to be counted both in the `White` category and in the `English Only` category. 
 
 **Where were the highest performing English Learner groups?**
 

@@ -1,15 +1,19 @@
 ---
-title: 'California School Dashboards Part 1: Cleaning and Transforming'
+title: 'California School Dashboards Part 1: Cleaning the Data' 
+image: "ryanestrellado.netlify.com/static/images/math_dashboard.png"
+description: "Cleaning the California School Dashboard data to help your analysis"
+url: "post/analyzing-california-school-dashboards-part-1-cleaning/"
 author: Ryan Estrellado
 date: '2018-01-25'
 slug: analyzing-california-school-dashboards-part-1-cleaning
 categories: []
-tags: [school_data]
+tags: [school_data, tidyverse]
 draft: TRUE
 ---
 
 
 
+<p><em>This is part one of a three part series where I’ll be working with California School Dashboard data by cleaning, visualizaing, and exploring through modeling.</em></p>
 <div id="introduction-its-ok-to-skip-around" class="section level1">
 <h1>Introduction: It’s Ok to Skip Around</h1>
 <p>I’m writing this series for data scientists, public school educators, and data scientists who are also public school educators. Turns out, this is pretty hard to do. Most data scientists want to see reprodicible code because it <a href="https://simplystatistics.org/2014/06/06/the-real-reason-reproducible-research-is-important/">explains the analysis explicitly</a>. On the other hand, public educators may be less interested in the code and more interested in the process, questions, and answers.</p>
@@ -29,9 +33,12 @@ draft: TRUE
 </div>
 <div id="importing-the-raw-data" class="section level1">
 <h1>Importing the Raw Data</h1>
-<p>I wanted to use a school district that had enough schools to make the exploration interesting, but not so big that we get too lost in the number of records available. I picked the Palo Alto Unified School District’s math dataset, but the code will work on any of the publicly available datasets.</p>
+<p>I picked a school district and did some cleaning to hide the district and school names. Every California school district’s data is available on the California School Dashboard website. This demonstration will work on any of the dashboard math datasets.</p>
 <p>The California Department of Education makes this data available on the five-by-five grid pages. First we’ll bring the data into R. Here’s how you get to the dataset:</p>
-<pre class="r"><code># Insert screenshot -------------------------------------</code></pre>
+<div class="figure">
+<img src="/images/math_dashboard.png" />
+
+</div>
 <ul>
 <li>From the district’s dashboard page, navigate to the metric you want to explore</li>
 <li>Click on the five-by-five link</li>
@@ -42,23 +49,24 @@ draft: TRUE
 <div id="clearer-column-names-helps-readability" class="section level1">
 <h1>Clearer Column Names Helps Readability</h1>
 <p>Here’s what the math dataset looks like without any changes:</p>
-<pre class="r"><code>math &lt;- read_tsv(&quot;https://query.data.world/s/ShZJAPpHw2DA4dkGvoTKU6xzSb5A61&quot;, 
-                 # Show the whole CDS code instead of scientific format
-                 col_types = cols(cds = col_character()))
+<pre class="r"><code>url &lt;- &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/Somedistrictmath.txt&quot;
+
+# Show the whole CDS code instead of scientific format
+math &lt;- read_tsv(url, col_types = cols(cds = col_character()))
 math</code></pre>
 <pre><code>## # A tibble: 232 x 26
-##    cds     rtype schoolname districtname  countyname charter_flag coe_flag
-##    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;         &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;   
-##  1 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-##  2 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-##  3 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-##  4 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-##  5 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-##  6 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-##  7 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-##  8 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-##  9 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
-## 10 436964… D     &lt;NA&gt;       Palo Alto Un… Santa Cla… &lt;NA&gt;         &lt;NA&gt;    
+##    cds   rtype schoolname districtname countyname charter_flag coe_flag
+##    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;   
+##  1 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+##  2 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+##  3 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+##  4 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+##  5 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+##  6 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+##  7 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+##  8 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+##  9 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
+## 10 14    D     &lt;NA&gt;       district_1   county_1   &lt;NA&gt;         &lt;NA&gt;    
 ## # ... with 222 more rows, and 19 more variables: studentgroup &lt;chr&gt;,
 ## #   currdenom &lt;int&gt;, currstatus &lt;dbl&gt;, priordenom &lt;int&gt;,
 ## #   priorstatus &lt;dbl&gt;, change &lt;dbl&gt;, statuslevel &lt;int&gt;, changelevel &lt;int&gt;,
@@ -67,7 +75,7 @@ math</code></pre>
 ## #   caa_level3_num &lt;int&gt;, caa_level3_pct &lt;dbl&gt;, ReportingYear &lt;chr&gt;,
 ## #   X26 &lt;chr&gt;</code></pre>
 <p>Notice that the column names aren’t immediately clear about what they’re describing. For example, the sizes of the student subgroups are kept in a column called <code>currdenom</code>. The average distance from score level of three is <code>currstatus</code>.</p>
-<p>It’s super important to take the time to review the <a href="https://www.cde.ca.gov/ta/ac/cm/mathgr38fall17.asp">file layout</a>, which provides definitions for every column name. It’s not the most fun reading, but I think you’ll find that you can help people answer questions better when you are confident you understand precisely what the numbers mean. Once you have a good understanding of what each column means, you can drop the column names you don’t need for your analysis and rename the ones that you keep. Let’s drop all columns except the school name, subgroup name, size of the subgroup, average distance from three, and the change from last year:</p>
+<p>It’s super important to take the time to review the <a href="https://www.cde.ca.gov/ta/ac/cm/mathgr38fall17.asp">file layout</a>, which provides definitions for every column name. It’s not the most fun reading, but you’ll find that you can help people answer questions better when you are confident you understand precisely what the numbers mean. Once you have a good understanding of what each column means, you can drop the column names you don’t need for your analysis and rename the ones that you keep. Let’s drop all columns except the school name, subgroup name, size of the subgroup, average distance from three, and the change from last year:</p>
 <pre class="r"><code>math &lt;- math %&gt;% 
   # Filter on just schools, not whole district counts 
   filter(rtype == &quot;S&quot;) %&gt;% 
@@ -78,18 +86,18 @@ math</code></pre>
          change)
 math</code></pre>
 <pre><code>## # A tibble: 215 x 5
-##    school             subgroup subgroup_size avg_dfrom3  change
-##    &lt;chr&gt;              &lt;chr&gt;            &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;
-##  1 Addison Elementary AA                   2      NA     NA    
-##  2 Addison Elementary ALL                217      57.3    0.700
-##  3 Addison Elementary AS                  45      73.8    2.40 
-##  4 Addison Elementary EL                  44      26.1    8.90 
-##  5 Addison Elementary ELO                 18     - 8.00  14.5  
-##  6 Addison Elementary EO                 158      60.6  - 3.70 
-##  7 Addison Elementary FI                   1      NA     NA    
-##  8 Addison Elementary HI                  23     -22.0  - 6.30 
-##  9 Addison Elementary MR                  31      62.5  -17.3  
-## 10 Addison Elementary RFP                 26      49.7  - 2.60 
+##    school    subgroup subgroup_size avg_dfrom3  change
+##    &lt;chr&gt;     &lt;chr&gt;            &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+##  1 school_13 AA                   2      NA     NA    
+##  2 school_13 ALL                217      57.3    0.700
+##  3 school_13 AS                  45      73.8    2.40 
+##  4 school_13 EL                  44      26.1    8.90 
+##  5 school_13 ELO                 18     - 8.00  14.5  
+##  6 school_13 EO                 158      60.6  - 3.70 
+##  7 school_13 FI                   1      NA     NA    
+##  8 school_13 HI                  23     -22.0  - 6.30 
+##  9 school_13 MR                  31      62.5  -17.3  
+## 10 school_13 RFP                 26      49.7  - 2.60 
 ## # ... with 205 more rows</code></pre>
 <p>Much better! Now we have only the columns we want, renamed so they’re clearer:</p>
 <ul>
@@ -102,44 +110,44 @@ math</code></pre>
 <p>There’s one more thing I want to do here. It’s hard to see right away which subgroups I’m looking at because the dataset uses subgroup codes instead of actual names. <em>We want to use our brain power more to ask and answer questions and less to remember what codes mean</em>, so let’s change that. I built a handy tool in my <a href="https://github.com/restrellado/spedtools">spedtools R package</a> that will quickly rename the codes to actual words.</p>
 <pre class="r"><code>(math &lt;- math %&gt;% mutate(subgroup = convert_subgroup(subgroup)))</code></pre>
 <pre><code>## # A tibble: 215 x 5
-##    school             subgroup            subgroup_size avg_dfrom3  change
-##    &lt;chr&gt;              &lt;chr&gt;                       &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;
-##  1 Addison Elementary Black/African Amer…             2      NA     NA    
-##  2 Addison Elementary All Students                  217      57.3    0.700
-##  3 Addison Elementary Asian                          45      73.8    2.40 
-##  4 Addison Elementary English Learner                44      26.1    8.90 
-##  5 Addison Elementary English Learners O…            18     - 8.00  14.5  
-##  6 Addison Elementary English Only                  158      60.6  - 3.70 
-##  7 Addison Elementary Filipino                        1      NA     NA    
-##  8 Addison Elementary Hispanic                       23     -22.0  - 6.30 
-##  9 Addison Elementary Multiple Races/Two…            31      62.5  -17.3  
-## 10 Addison Elementary RFEPs Only                     26      49.7  - 2.60 
+##    school    subgroup                   subgroup_size avg_dfrom3  change
+##    &lt;chr&gt;     &lt;chr&gt;                              &lt;int&gt;      &lt;dbl&gt;   &lt;dbl&gt;
+##  1 school_13 Black/African American                 2      NA     NA    
+##  2 school_13 All Students                         217      57.3    0.700
+##  3 school_13 Asian                                 45      73.8    2.40 
+##  4 school_13 English Learner                       44      26.1    8.90 
+##  5 school_13 English Learners Only                 18     - 8.00  14.5  
+##  6 school_13 English Only                         158      60.6  - 3.70 
+##  7 school_13 Filipino                               1      NA     NA    
+##  8 school_13 Hispanic                              23     -22.0  - 6.30 
+##  9 school_13 Multiple Races/Two or More            31      62.5  -17.3  
+## 10 school_13 RFEPs Only                            26      49.7  - 2.60 
 ## # ... with 205 more rows</code></pre>
 </div>
 <div id="exploring-a-clean-dataset" class="section level1">
 <h1>Exploring a Clean Dataset</h1>
 <p>Now that we have just the columns we want to explore and actual subgroup names instead of codes, we can start exploring the dataset faster with a series of quick exploratory questions. We just want to indulge a little curiosity and ask quick questions and answers to get the analytic juices going. <strong>My favorite way to do this is to encourage lots of questions and to provide rapid answers so the process feels casual and conversational, rather than writing up a list of questions and taking days to respond with the data.</strong> Having a clean dataset ready and being fast at the keyboard helps us do this. Here are some examples:</p>
 <p><strong>How different are the student subgroups in size?</strong></p>
-<p>Sometimes you want to get a sense of how big the student subgroups are, especially when dealing with metrics like “average distance of three”, the results of which are influenced in some part by how big the group is. Here are the top ten biggest subgroup student counts in Palo Alto, along with their school.</p>
+<p>Sometimes you want to get a sense of how big the student subgroups are, especially when dealing with metrics like “average distance of three”, the results of which are influenced in some part by how big the group is. Here are the top ten biggest subgroup student counts in this dataset, along with their school.</p>
 <pre class="r"><code>math %&gt;% 
   select(-c(avg_dfrom3, change)) %&gt;% 
   filter(subgroup != &quot;All Students&quot;) %&gt;% 
   filter(min_rank(desc(subgroup_size)) &lt;= 10) %&gt;% 
   arrange(desc(subgroup_size))</code></pre>
 <pre><code>## # A tibble: 10 x 3
-##    school                       subgroup     subgroup_size
-##    &lt;chr&gt;                        &lt;chr&gt;                &lt;int&gt;
-##  1 David Starr Jordan Middle    English Only           765
-##  2 Jane Lathrop Stanford Middle English Only           628
-##  3 David Starr Jordan Middle    White                  509
-##  4 Jane Lathrop Stanford Middle Asian                  474
-##  5 Terman Middle                English Only           404
-##  6 Jane Lathrop Stanford Middle White                  380
-##  7 David Starr Jordan Middle    Asian                  331
-##  8 Terman Middle                Asian                  254
-##  9 Terman Middle                White                  251
-## 10 Ohlone Elementary            English Only           190</code></pre>
-<p>Not surprisingly, the secondary schools take up most slots, as you’d expect from schools with higher enrollment. It’s important to note here that not all of these groups are mutually exclusive. For example, it’s possible for a student to be counted both in the <code>White</code> category and in the <code>English Only</code> category.</p>
+##    school    subgroup     subgroup_size
+##    &lt;chr&gt;     &lt;chr&gt;                &lt;int&gt;
+##  1 school_10 English Only           765
+##  2 school_07 English Only           628
+##  3 school_10 White                  509
+##  4 school_07 Asian                  474
+##  5 school_12 English Only           404
+##  6 school_07 White                  380
+##  7 school_10 Asian                  331
+##  8 school_12 Asian                  254
+##  9 school_12 White                  251
+## 10 school_04 English Only           190</code></pre>
+<p>It’s important to note here that not all of these groups are mutually exclusive. For example, it’s possible for a student to be counted both in the <code>White</code> category and in the <code>English Only</code> category.</p>
 <p><strong>Where were the highest performing English Learner groups?</strong></p>
 <p>Two questions that seem to come up a lot when I work with school staff are</p>
 <ul>
@@ -153,18 +161,18 @@ math</code></pre>
   filter(min_rank(desc(avg_dfrom3)) &lt;= 10) %&gt;% 
   arrange(desc(avg_dfrom3))</code></pre>
 <pre><code>## # A tibble: 10 x 3
-##    school                       subgroup        avg_dfrom3
-##    &lt;chr&gt;                        &lt;chr&gt;                &lt;dbl&gt;
-##  1 Herbert Hoover Elementary    English Learner       90.5
-##  2 Jane Lathrop Stanford Middle English Learner       72.1
-##  3 Palo Verde Elementary        English Learner       61.2
-##  4 Ohlone Elementary            English Learner       54.0
-##  5 Duveneck Elementary          English Learner       50.7
-##  6 Lucille M. Nixon Elementary  English Learner       49.7
-##  7 Fairmeadow Elementary        English Learner       48.9
-##  8 Juana Briones Elementary     English Learner       43.5
-##  9 El Carmelo Elementary        English Learner       37.6
-## 10 Walter Hays Elementary       English Learner       32.8</code></pre>
+##    school    subgroup        avg_dfrom3
+##    &lt;chr&gt;     &lt;chr&gt;                &lt;dbl&gt;
+##  1 school_09 English Learner       90.5
+##  2 school_07 English Learner       72.1
+##  3 school_14 English Learner       61.2
+##  4 school_04 English Learner       54.0
+##  5 school_02 English Learner       50.7
+##  6 school_15 English Learner       49.7
+##  7 school_01 English Learner       48.9
+##  8 school_03 English Learner       43.5
+##  9 school_06 English Learner       37.6
+## 10 school_05 English Learner       32.8</code></pre>
 <p>Now school staff can call colleagues at other schools to get a conversation going about what’s been working well.</p>
 <p><strong>Which schools had the highest increases from last year in each subgroup?</strong></p>
 <p>We can keep the conversation going by looking at the top two positive change scores for every subgroup. These are the schools that had the best increases in the distance from three score from last year. Now schools can get a sense of where to start calling if they want to hear about strategies, interventions, or initiatives that their colleagues are using to be successful.</p>
@@ -178,18 +186,18 @@ math</code></pre>
   arrange(subgroup)</code></pre>
 <pre><code>## # A tibble: 21 x 3
 ## # Groups:   subgroup [11]
-##    subgroup               school                    change
-##    &lt;chr&gt;                  &lt;chr&gt;                      &lt;dbl&gt;
-##  1 Asian                  Barron Park Elementary     12.4 
-##  2 Asian                  Terman Middle              11.6 
-##  3 Black/African American Terman Middle              58.4 
-##  4 English Learner        Addison Elementary          8.90
-##  5 English Learner        Ohlone Elementary           3.40
-##  6 English Learners Only  Addison Elementary         14.5 
-##  7 English Learners Only  Ohlone Elementary          34.1 
-##  8 English Only           Herbert Hoover Elementary   9.10
-##  9 English Only           Terman Middle               6.30
-## 10 Hispanic               Herbert Hoover Elementary  13.1 
+##    subgroup               school    change
+##    &lt;chr&gt;                  &lt;chr&gt;      &lt;dbl&gt;
+##  1 Asian                  school_08  12.4 
+##  2 Asian                  school_12  11.6 
+##  3 Black/African American school_12  58.4 
+##  4 English Learner        school_13   8.90
+##  5 English Learner        school_04   3.40
+##  6 English Learners Only  school_13  14.5 
+##  7 English Learners Only  school_04  34.1 
+##  8 English Only           school_09   9.10
+##  9 English Only           school_12   6.30
+## 10 Hispanic               school_09  13.1 
 ## # ... with 11 more rows</code></pre>
 </div>
 <div id="conclusion" class="section level1">
