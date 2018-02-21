@@ -20,9 +20,9 @@ library(knitr)
 ```{r}
 # A list of urls for each dataset
 urls <- as.list(c(
-  "https://query.data.world/s/RBwim7uqVwPq73bkHsYKVHbshZst0M", 
-  "https://query.data.world/s/LSizff8-rMxKNcvkhaGkHqaPhRnt-N", 
-  "https://query.data.world/s/CekXKAmUmvwDMqbWS4RDu6texq6rNn"
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_1.txt", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_2.txt", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_3.txt"
 ))
 ``` 
 
@@ -45,6 +45,7 @@ clean_dashboard <- function(d) {
     "No Data", "Decreased Sig", "Decreased", "Maintained", 
     "Increased", "Increased Sig"
   )
+  
   d %>% 
     filter(rtype != "D") %>% 
     filter(studentgroup != "ALL") %>%

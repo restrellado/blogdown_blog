@@ -14,9 +14,9 @@ draft: TRUE
 <p><a href="https://www.niche.com/k12/search/largest-school-districts/s/california/">Three largest school districts in California</a></p>
 <pre class="r"><code># A list of urls for each dataset
 urls &lt;- as.list(c(
-  &quot;https://query.data.world/s/RBwim7uqVwPq73bkHsYKVHbshZst0M&quot;, 
-  &quot;https://query.data.world/s/LSizff8-rMxKNcvkhaGkHqaPhRnt-N&quot;, 
-  &quot;https://query.data.world/s/CekXKAmUmvwDMqbWS4RDu6texq6rNn&quot;
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_1.txt&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_2.txt&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_3.txt&quot;
 ))</code></pre>
 <pre class="r"><code>all_files &lt;- urls %&gt;% map(~read_tsv(., col_types = cols(cds = col_character())))</code></pre>
 <pre class="r"><code># Create list names
@@ -26,14 +26,14 @@ list_names &lt;- all_files %&gt;% map(~unique(.$districtname))
 clean_data &lt;- all_files %&gt;% map(clean_dashboard) %&gt;% 
   set_names(nm = list_names)</code></pre>
 <pre class="r"><code>clean_data %&gt;% map(dim)</code></pre>
-<pre><code>## $`Long Beach Unified`
-## [1] 1037    9
+<pre><code>## $district_1
+## [1] 229   9
 ## 
-## $`Los Angeles Unified`
-## [1] 7178    9
+## $district_2
+## [1] 460   9
 ## 
-## $`San Diego Unified`
-## [1] 2021    9</code></pre>
+## $district_3
+## [1] 1198    9</code></pre>
 <pre class="r"><code>clean_data &lt;- clean_data %&gt;% bind_rows()</code></pre>
 <pre class="r"><code>ggplot(data = clean_data) + 
   geom_bar(aes(x = changelevel)) + 
