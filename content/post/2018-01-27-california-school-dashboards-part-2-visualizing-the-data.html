@@ -30,10 +30,18 @@ clean_data &lt;- all_files %&gt;% map(clean_dashboard) %&gt;%
 <pre class="r"><code>clean_data %&gt;% 
   bind_rows() %&gt;% 
   ggplot(data = .) + 
-  geom_bar(aes(x = changelevel)) + 
+  geom_bar(aes(x = changelevel), fill = &quot;deepskyblue3&quot;) + 
   labs(title = &quot;English Language Arts Change Levels: Distance From Three&quot;, 
        x = &quot;&quot;, 
        y = &quot;Number of Subgroups&quot;) + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   facet_wrap(~districtname)</code></pre>
 <p><img src="/post/2018-01-27-california-school-dashboards-part-2-visualizing-the-data_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>This kind of visualization is useful for comparing the distribution of subgroups across categories. Each district has a different total enrolllment, so the actual count of subgroups isn’t as meaningful as the shape of each district’s data. Looking at these differences can help teams identify which groups they want to visit and observe the underlying processes that generate the data. <strong>The important question here is: What’s happening in real life that generates these numbers?</strong></p>
+<p>For example, <code>district_1</code> has a flatter profile compared to <code>district_2</code> and <code>district_3</code>. I would be interested in visiting <code>district_1</code> to see what their processes are for determining which students take the English Language Arts test. Some curiosities are:</p>
+<ul>
+<li>Do these processes look similar or different from the other two districts?</li>
+<li>If we listen to each district’s staff describe all the events that lead up to an English Language Arts subgroup score being produced, how would those descriptions differ from each other?</li>
+<li>Do these different descriptions plausibly explain the differing shapes of this visualization?</li>
+<li>If we changed some of these processes, would we expect a different shape to this data?</li>
+</ul>

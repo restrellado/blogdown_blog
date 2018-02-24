@@ -74,10 +74,19 @@ clean_data <- all_files %>% map(clean_dashboard) %>%
 clean_data %>% 
   bind_rows() %>% 
   ggplot(data = .) + 
-  geom_bar(aes(x = changelevel)) + 
+  geom_bar(aes(x = changelevel), fill = "deepskyblue3") + 
   labs(title = "English Language Arts Change Levels: Distance From Three", 
        x = "", 
        y = "Number of Subgroups") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   facet_wrap(~districtname)
 ```
+
+This kind of visualization is useful for comparing the distribution of subgroups across categories. Each district has a different total enrolllment, so the actual count of subgroups isn't as meaningful as the shape of each district's data. Looking at these differences can help teams identify which groups they want to visit and observe the underlying processes that generate the data. **The important question here is: What's happening in real life that generates these numbers?**
+
+For example, `district_1` has a flatter profile compared to `district_2` and `district_3`. I would be interested in visiting `district_1` to see what their processes are for determining which students take the English Language Arts test. Some curiosities are:  
+
+- Do these processes look similar or different from the other two districts? 
+- If we listen to each district's staff describe all the events that lead up to an English Language Arts subgroup score being produced, how would those descriptions differ from each other? 
+- Do these different descriptions plausibly explain the differing shapes of this visualization? 
+- If we changed some of these processes, would we expect a different shape to this data? 
