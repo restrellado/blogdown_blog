@@ -6,7 +6,6 @@ slug: california-school-dashboards-part-2-visualizing-the-data
 categories: []
 tags:
   - school_data
-draft: TRUE
 ---
 
 *This is part one of a three part series where I'll be working with California School Dashboard data by cleaning, visualizaing, and exploring through modeling. You can read the first part of this series, which shows one way to clean and prepare the data, [at this link](https://ryanestrellado.netlify.com/post/analyzing-california-school-dashboards-part-1-cleaning/).* 
