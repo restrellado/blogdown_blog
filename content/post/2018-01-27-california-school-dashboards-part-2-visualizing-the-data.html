@@ -30,7 +30,7 @@ clean_data &lt;- all_files %&gt;% map(clean_dashboard) %&gt;%
 <pre class="r"><code>clean_data %&gt;% 
   bind_rows() %&gt;% 
   ggplot(data = .) + 
-  geom_bar(aes(x = changelevel), fill = &quot;deepskyblue3&quot;) + 
+  geom_bar(aes(x = changelevel), fill = &quot;violetred3&quot;) + 
   labs(title = &quot;English Language Arts Change Levels: Distance From Three&quot;, 
        x = &quot;&quot;, 
        y = &quot;Number of Subgroups&quot;) + 

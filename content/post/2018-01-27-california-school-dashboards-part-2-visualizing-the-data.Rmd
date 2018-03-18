@@ -74,7 +74,7 @@ clean_data <- all_files %>% map(clean_dashboard) %>%
 clean_data %>% 
   bind_rows() %>% 
   ggplot(data = .) + 
-  geom_bar(aes(x = changelevel), fill = "deepskyblue3") + 
+  geom_bar(aes(x = changelevel), fill = "violetred3") + 
   labs(title = "English Language Arts Change Levels: Distance From Three", 
        x = "", 
        y = "Number of Subgroups") + 
