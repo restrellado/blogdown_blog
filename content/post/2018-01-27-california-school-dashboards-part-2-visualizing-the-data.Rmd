@@ -1,7 +1,7 @@
 ---
 title: 'California School Dashboards Part 2: Visualizing the Data'
 author: Ryan Estrellado
-date: '2018-01-27'
+date: "2018-03-18"
 slug: california-school-dashboards-part-2-visualizing-the-data
 categories: []
 tags:
@@ -13,12 +13,16 @@ draft: TRUE
 
 Now that our dashboard data is cleaned up so you have one school/subgroup combination per row and one variable per column, we're ready to start visualizing the data. Cleaning the data in this way is helpful because the we'll be using the `ggplot2` package, which makes it easy for us to map variables in our cleaned dataset to graphical features of our chart. To illustrate that, we're going to work with three anonymized district English Language Arts datasets. You can view the script I used to anonymize the data [on my GitHub page](https://github.com/restrellado/ca_dashboards_anon). 
 
-Our goal will be to use data visualization to compare the number of subgroups who fell in each of the six categories of distance from three change. You can [visit the CDE website](https://www.cde.ca.gov/ta/ac/cm/acadindcal.asp) for a more complete description of the distance from three score and the categories of change. 
+Our goal will be to use data visualization to compare the number of subgroups who fell in each of the six categories of distance from three change. You can [visit the CDE website](https://www.cde.ca.gov/ta/ac/cm/acadindcal.asp) for a more complete description of the distance from three score and the categories of change.
 
 ```{r echo=FALSE, message=FALSE}
 library(tidyverse) 
 library(spedtools) 
 library(knitr)
+```
+
+```{r echo=FALSE}
+opts_chunk$set(echo = FALSE)
 ```
 
 ```{r}
@@ -70,7 +74,7 @@ clean_data <- all_files %>% map(clean_dashboard) %>%
   set_names(nm = list_names)
 ```
 
-```{r}
+```{r echo=TRUE}
 clean_data %>% 
   bind_rows() %>% 
   ggplot(data = .) + 
@@ -90,3 +94,5 @@ For example, `district_1` has a flatter profile compared to `district_2` and `di
 - If we listen to each district's staff describe all the events that lead up to an English Language Arts subgroup score being produced, how would those descriptions differ from each other? 
 - Do these different descriptions plausibly explain the differing shapes of this visualization? 
 - If we changed some of these processes, would we expect a different shape to this data? 
+
+You can view the full code for this post [on my GitHub site](https://github.com/restrellado/blogdown_blog). Next up, modeling the California School Dashboard data!

@@ -1,7 +1,7 @@
 ---
 title: 'California School Dashboards Part 2: Visualizing the Data'
 author: Ryan Estrellado
-date: '2018-01-27'
+date: "2018-03-18"
 slug: california-school-dashboards-part-2-visualizing-the-data
 categories: []
 tags:
@@ -14,19 +14,6 @@ draft: TRUE
 <p><em>This is part one of a three part series where I’ll be working with California School Dashboard data by cleaning, visualizaing, and exploring through modeling. You can read the first part of this series, which shows one way to clean and prepare the data, <a href="https://ryanestrellado.netlify.com/post/analyzing-california-school-dashboards-part-1-cleaning/">at this link</a>.</em></p>
 <p>Now that our dashboard data is cleaned up so you have one school/subgroup combination per row and one variable per column, we’re ready to start visualizing the data. Cleaning the data in this way is helpful because the we’ll be using the <code>ggplot2</code> package, which makes it easy for us to map variables in our cleaned dataset to graphical features of our chart. To illustrate that, we’re going to work with three anonymized district English Language Arts datasets. You can view the script I used to anonymize the data <a href="https://github.com/restrellado/ca_dashboards_anon">on my GitHub page</a>.</p>
 <p>Our goal will be to use data visualization to compare the number of subgroups who fell in each of the six categories of distance from three change. You can <a href="https://www.cde.ca.gov/ta/ac/cm/acadindcal.asp">visit the CDE website</a> for a more complete description of the distance from three score and the categories of change.</p>
-<pre class="r"><code># A list of urls for each dataset
-urls &lt;- as.list(c(
-  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_1.txt&quot;, 
-  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_2.txt&quot;, 
-  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/SomeDistrictela_3.txt&quot;
-))</code></pre>
-<pre class="r"><code>all_files &lt;- urls %&gt;% map(~read_tsv(., col_types = cols(cds = col_character())))</code></pre>
-<pre class="r"><code># Create list names
-list_names &lt;- all_files %&gt;% map(~unique(.$districtname))
-
-# Clean all three files
-clean_data &lt;- all_files %&gt;% map(clean_dashboard) %&gt;% 
-  set_names(nm = list_names)</code></pre>
 <pre class="r"><code>clean_data %&gt;% 
   bind_rows() %&gt;% 
   ggplot(data = .) + 
@@ -36,7 +23,7 @@ clean_data &lt;- all_files %&gt;% map(clean_dashboard) %&gt;%
        y = &quot;Number of Subgroups&quot;) + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   facet_wrap(~districtname)</code></pre>
-<p><img src="/post/2018-01-27-california-school-dashboards-part-2-visualizing-the-data_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><img src="/post/2018-01-27-california-school-dashboards-part-2-visualizing-the-data_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>This kind of visualization is useful for comparing the distribution of subgroups across categories. Each district has a different total enrolllment, so the actual count of subgroups isn’t as meaningful as the shape of each district’s data. Looking at these differences can help teams identify which groups they want to visit and observe the underlying processes that generate the data. <strong>The important question here is: What’s happening in real life that generates these numbers?</strong></p>
 <p>For example, <code>district_1</code> has a flatter profile compared to <code>district_2</code> and <code>district_3</code>. I would be interested in visiting <code>district_1</code> to see what their processes are for determining which students take the English Language Arts test. Some curiosities are:</p>
 <ul>
@@ -45,3 +32,4 @@ clean_data &lt;- all_files %&gt;% map(clean_dashboard) %&gt;%
 <li>Do these different descriptions plausibly explain the differing shapes of this visualization?</li>
 <li>If we changed some of these processes, would we expect a different shape to this data?</li>
 </ul>
+<p>You can view the full code for this post <a href="https://github.com/restrellado/blogdown_blog">on my GitHub site</a>. Next up, modeling the California School Dashboard data!</p>
