@@ -8,7 +8,7 @@ tags:
   - school_data
 ---
 
-*This is part one of a three part series where I'll be working with California School Dashboard data by cleaning, visualizaing, and exploring through modeling. You can read the first part of this series, which shows one way to clean and prepare the data, [at this link](https://ryanestrellado.netlify.com/post/analyzing-california-school-dashboards-part-1-cleaning/).* 
+*This is part two of a three part series where I'll be working with California School Dashboard data by cleaning, visualizaing, and exploring through modeling. You can read the first part of this series, which shows one way to clean and prepare the data, [at this link](https://ryanestrellado.netlify.com/post/analyzing-california-school-dashboards-part-1-cleaning/).* 
 
 Now that our dashboard data is cleaned up so you have one school/subgroup combination per row and one variable per column, we're ready to start visualizing the data. Cleaning the data in this way is helpful because the we'll be using the `ggplot2` package, which makes it easy for us to map variables in our cleaned dataset to graphical features of our chart. To illustrate that, we're going to work with three anonymized district English Language Arts datasets. You can view the script I used to anonymize the data [on my GitHub page](https://github.com/restrellado/ca_dashboards_anon). 
 
