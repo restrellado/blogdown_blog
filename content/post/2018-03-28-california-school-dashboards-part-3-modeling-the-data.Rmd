@@ -10,3 +10,38 @@ tags:
 draft: TRUE
 ---
 
+```{r}
+library(tidyverse) 
+library(modelr)
+```
+
+```{r}
+# Read data 
+urls <- c(
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_1.tsv", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_2.tsv", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_3.tsv", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_4.tsv", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_5.tsv", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_6.tsv", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_7.tsv", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_8.tsv", 
+  "https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_9.tsv"
+) 
+
+all_files <- urls %>% 
+  map(., read_tsv) %>% 
+  set_names(., nm = map_chr(., ~unique(.$districtname)))
+```
+
+```{r}
+all_files[[1]] %>% 
+  # Remove school level datapoints 
+  filter(!is.na(schoolname)) %>%
+  ggplot(aes(x = currstatus_math, y = currstatus_ela)) + 
+  geom_point() + 
+  geom_smooth(method = "loess") +
+  labs(title = "Distance from Three: Math vs. English Language Arts", 
+       x = "Math Dist from Three", y = "ELA Dist from Three")
+```
+

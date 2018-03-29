@@ -12,4 +12,112 @@ draft: TRUE
 
 
 
+<pre class="r"><code>library(tidyverse) </code></pre>
+<pre><code>## ── Attaching packages ───────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
+<pre><code>## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.4
+## ✔ tidyr   0.8.0     ✔ stringr 1.2.0
+## ✔ readr   1.1.1     ✔ forcats 0.2.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(modelr)</code></pre>
+<pre class="r"><code># Read data 
+urls &lt;- c(
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_1.tsv&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_2.tsv&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_3.tsv&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_4.tsv&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_5.tsv&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_6.tsv&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_7.tsv&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_8.tsv&quot;, 
+  &quot;https://raw.githubusercontent.com/restrellado/data_for_blog/master/dashboard_model_data/district_9.tsv&quot;
+) 
 
+all_files &lt;- urls %&gt;% 
+  map(., read_tsv) %&gt;% 
+  set_names(., nm = map_chr(., ~unique(.$districtname)))</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )
+## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )
+## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )
+## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )
+## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )
+## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )
+## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )
+## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )
+## Parsed with column specification:
+## cols(
+##   districtname = col_character(),
+##   schoolname = col_character(),
+##   studentgroup = col_character(),
+##   currstatus_ela = col_double(),
+##   currstatus_math = col_double()
+## )</code></pre>
+<pre class="r"><code>all_files[[1]] %&gt;% 
+  # Remove school level datapoints 
+  filter(!is.na(schoolname)) %&gt;%
+  ggplot(aes(x = currstatus_math, y = currstatus_ela)) + 
+  geom_point() + 
+  geom_smooth(method = &quot;loess&quot;) +
+  labs(title = &quot;Distance from Three: Math vs. English Language Arts&quot;, 
+       x = &quot;Math Dist from Three&quot;, y = &quot;ELA Dist from Three&quot;)</code></pre>
+<pre><code>## Warning: Removed 37 rows containing non-finite values (stat_smooth).</code></pre>
+<pre><code>## Warning: Removed 37 rows containing missing values (geom_point).</code></pre>
+<p><img src="/post/2018-03-28-california-school-dashboards-part-3-modeling-the-data_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
