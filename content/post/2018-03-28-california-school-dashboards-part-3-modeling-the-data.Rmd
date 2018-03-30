@@ -63,26 +63,68 @@ comb <- all_files %>%
 comb
 ```
 
-```{r}
+```{r echo=TRUE}
 dist_mod <- function(d) {
   lm(currstatus_ela ~ currstatus_math, data = d)
 }
+```
 
+```{r echo=TRUE}
 mods <- comb %>% 
   mutate(model = map(data, dist_mod), 
          resids = map2(data, model, add_residuals)) 
 mods
 ```
 
-[Definition of EL and ELO](https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf) 
-
-```{r}
+```{r echo=TRUE}
 resids <- mods %>% 
-  unnest(resids) %>% 
-  mutate(el = ifelse(studentgroup == "English Learners Only", TRUE, FALSE))
-
-ggplot(data = resids, aes(x = currstatus_math, y = resid, color = el)) + 
-  geom_point(alpha = .5) + 
-  facet_wrap(~ districtname)
+  unnest(resids)
 ```
 
+The original dataset did not include distance from three scores for any subgroup 
+that had less than 11 students. 
+
+```{r results='hide'}
+resids %>% map(~sum(is.na(.)))
+```
+
+```{r results='hide'}
+resids %>% 
+  filter(is.na(currstatus_ela) | is.na(currstatus_math))
+```
+
+```{r echo=TRUE}
+ggplot(data = resids, aes(x = currstatus_math, y = resid)) + 
+  geom_point(alpha = .25) + 
+  facet_wrap(~ districtname) + 
+  labs(title = "Residuals Across Math Distance From Three Scores", 
+       x = "Math: Distance From Three", 
+       y = "Residuals")
+```
+
+```{r echo=TRUE}
+ggplot(data = resids, aes(x = currstatus_math, y = resid, color = studentgroup)) + 
+  geom_point(alpha = .25) + 
+  facet_wrap(~ districtname) + 
+  labs(title = "Residuals Across Math Distance From Three Scores", 
+       x = "Math: Distance From Three", 
+       y = "Residuals")
+```
+
+
+[Definition of EL and ELO](https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf) 
+
+```{r echo=TRUE}
+resids %>% 
+  mutate(elo = ifelse(studentgroup == "English Learners Only", "ELO", "Not ELO")) %>%
+  ggplot(data = ., aes(x = currstatus_math, y = resid, color = elo)) + 
+  geom_point(alpha = .5) + 
+  facet_wrap(~ districtname) +
+  labs(title = "Residuals Across Math Distance From Three Scores", 
+       x = "Math: Distance From Three", 
+       y = "Residuals", 
+       color = "")
+```
+
+When the residuals are negative, the actual datapoint was lower than what the 
+model thought it should be. 
