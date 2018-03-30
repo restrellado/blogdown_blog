@@ -59,7 +59,30 @@ comb <- all_files %>%
   mutate(studentgroup = convert_subgroup(studentgroup)) %>% 
   # Nest datasets by district
   group_by(districtname) %>% 
-  nest()
+  nest() 
 comb
+```
+
+```{r}
+dist_mod <- function(d) {
+  lm(currstatus_ela ~ currstatus_math, data = d)
+}
+
+mods <- comb %>% 
+  mutate(model = map(data, dist_mod), 
+         resids = map2(data, model, add_residuals)) 
+mods
+```
+
+[Definition of EL and ELO](https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf) 
+
+```{r}
+resids <- mods %>% 
+  unnest(resids) %>% 
+  mutate(el = ifelse(studentgroup == "English Learners Only", TRUE, FALSE))
+
+ggplot(data = resids, aes(x = currstatus_math, y = resid, color = el)) + 
+  geom_point(alpha = .5) + 
+  facet_wrap(~ districtname)
 ```
 
