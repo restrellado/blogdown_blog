@@ -13,7 +13,8 @@ draft: TRUE
 ```{r echo=FALSE, message=FALSE}
 library(tidyverse) 
 library(modelr) 
-library(knitr)
+library(knitr) 
+library(spedtools)
 ```
 
 ```{r echo=FALSE}
@@ -48,5 +49,17 @@ all_files[[1]] %>%
   geom_smooth(method = "loess") +
   labs(title = "Distance from Three: Math vs. English Language Arts", 
        x = "Math Dist from Three", y = "ELA Dist from Three")
+```
+
+```{r}
+comb <- all_files %>% 
+  bind_rows() %>% 
+  # Remove district level observations, only include subgroups
+  filter(!is.na(schoolname), studentgroup != "ALL") %>% 
+  mutate(studentgroup = convert_subgroup(studentgroup)) %>% 
+  # Nest datasets by district
+  group_by(districtname) %>% 
+  nest()
+comb
 ```
 
