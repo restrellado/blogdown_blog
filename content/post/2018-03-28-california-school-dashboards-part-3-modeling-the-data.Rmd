@@ -10,9 +10,14 @@ tags:
 draft: TRUE
 ---
 
-```{r}
+```{r echo=FALSE, message=FALSE}
 library(tidyverse) 
-library(modelr)
+library(modelr) 
+library(knitr)
+```
+
+```{r echo=FALSE}
+opts_chunk$set(echo = FALSE, message = FALSE)
 ```
 
 ```{r}
