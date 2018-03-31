@@ -40,16 +40,35 @@ all_files <- urls %>%
   set_names(., nm = map_chr(., ~unique(.$districtname)))
 ```
 
+If we plot the distance from three score of math on the x-axis and the distance 
+from three score of English language arts for each school's subgroup in 
+`district_1`, we see that there is a pretty clear linear pattern. 
+
 ```{r}
 all_files[[1]] %>% 
   # Remove school level datapoints 
   filter(!is.na(schoolname)) %>%
   ggplot(aes(x = currstatus_math, y = currstatus_ela)) + 
   geom_point() + 
-  geom_smooth(method = "loess") +
+  geom_smooth(method = "lm") +
   labs(title = "Distance from Three: Math vs. English Language Arts", 
        x = "Math Dist from Three", y = "ELA Dist from Three")
 ```
+
+The line drawn through the plot is the model fit. That means that it goes through 
+the plot in a straight line to best follow the relationship between the math 
+distance of three and the English language arts distance from three in this 
+dataset. This relationship is quantified by the model, but we won't go into that 
+here because we're more interested in how well this model predicted scores for 
+each school's subgroup. We're interested in looking at the differences between 
+predictions and actual data points and how that looks similar or different for 
+each school's subgroups. 
+
+In order to compare this model fit to all nine of our districts, I arranged the 
+data so that each row was a district and their dataset. I then fit a linear model 
+to each district and calculated the differences between the predicted values 
+and actual values. These differences are stored in a column called `resid` 
+(short for [residuals](https://en.wikipedia.org/wiki/Errors_and_residuals)). 
 
 ```{r}
 comb <- all_files %>% 
@@ -60,8 +79,13 @@ comb <- all_files %>%
   # Nest datasets by district
   group_by(districtname) %>% 
   nest() 
-comb
 ```
+
+Here is some of the code for getting that done. Feel free to skip to the plots if 
+you want to start examing the results. 
+
+I used a function for the linear model so I can apply it to all nine datasets 
+using the `purrr` package. 
 
 ```{r echo=TRUE}
 dist_mod <- function(d) {
@@ -69,20 +93,25 @@ dist_mod <- function(d) {
 }
 ```
 
+Next I used `modelr::add_residuals` to add the residuals. 
+
 ```{r echo=TRUE}
 mods <- comb %>% 
   mutate(model = map(data, dist_mod), 
          resids = map2(data, model, add_residuals)) 
-mods
 ```
+
+Finally I used `dplyr:unnest` to open up the dataset so that each residual 
+value had it's own row. 
 
 ```{r echo=TRUE}
 resids <- mods %>% 
   unnest(resids)
 ```
 
-The original dataset did not include distance from three scores for any subgroup 
-that had less than 11 students. 
+**A note on missing values** 
+
+**The original dataset did not include distance from three scores for any subgroup that had less than 11 students. This is a typical practice with education data and is usually done to maintain student confidentiality. Consdquently, there is a pretty sizeable amount of subgroups that are missing distance from three scores.**
 
 ```{r results='hide'}
 resids %>% map(~sum(is.na(.)))
@@ -92,6 +121,12 @@ resids %>% map(~sum(is.na(.)))
 resids %>% 
   filter(is.na(currstatus_ela) | is.na(currstatus_math))
 ```
+
+# Visualizing the Differences Between Prediction and Actual Datapoints 
+
+If we create a plot that has the distance from three scores (our predictor) in 
+the x-axis and the residuals (a.k.a., difference between predicted and actual 
+values in the y-axis) for each district, we get the following: 
 
 ```{r echo=TRUE}
 ggplot(data = resids, aes(x = currstatus_math, y = resid)) + 

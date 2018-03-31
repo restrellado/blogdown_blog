@@ -12,43 +12,29 @@ draft: TRUE
 
 
 
+<p>If we plot the distance from three score of math on the x-axis and the distance from three score of English language arts for each school’s subgroup in <code>district_1</code>, we see that there is a pretty clear linear pattern.</p>
 <pre><code>## Warning: Removed 37 rows containing non-finite values (stat_smooth).</code></pre>
 <pre><code>## Warning: Removed 37 rows containing missing values (geom_point).</code></pre>
 <p><img src="/post/2018-03-28-california-school-dashboards-part-3-modeling-the-data_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<pre><code>## # A tibble: 9 x 2
-##   districtname data                
-##   &lt;chr&gt;        &lt;list&gt;              
-## 1 district_1   &lt;tibble [183 × 4]&gt;  
-## 2 district_2   &lt;tibble [319 × 4]&gt;  
-## 3 district_3   &lt;tibble [1,162 × 4]&gt;
-## 4 district_4   &lt;tibble [45 × 4]&gt;   
-## 5 district_5   &lt;tibble [141 × 4]&gt;  
-## 6 district_6   &lt;tibble [1,037 × 4]&gt;
-## 7 district_7   &lt;tibble [200 × 4]&gt;  
-## 8 district_8   &lt;tibble [1,201 × 4]&gt;
-## 9 district_9   &lt;tibble [36 × 4]&gt;</code></pre>
+<p>The line drawn through the plot is the model fit. That means that it goes through the plot in a straight line to best follow the relationship between the math distance of three and the English language arts distance from three in this dataset. This relationship is quantified by the model, but we won’t go into that here because we’re more interested in how well this model predicted scores for each school’s subgroup. We’re interested in looking at the differences between predictions and actual data points and how that looks similar or different for each school’s subgroups.</p>
+<p>In order to compare this model fit to all nine of our districts, I arranged the data so that each row was a district and their dataset. I then fit a linear model to each district and calculated the differences between the predicted values and actual values. These differences are stored in a column called <code>resid</code> (short for <a href="https://en.wikipedia.org/wiki/Errors_and_residuals">residuals</a>).</p>
+<p>Here is some of the code for getting that done. Feel free to skip to the plots if you want to start examing the results.</p>
+<p>I used a function for the linear model so I can apply it to all nine datasets using the <code>purrr</code> package.</p>
 <pre class="r"><code>dist_mod &lt;- function(d) {
   lm(currstatus_ela ~ currstatus_math, data = d)
 }</code></pre>
+<p>Next I used <code>modelr::add_residuals</code> to add the residuals.</p>
 <pre class="r"><code>mods &lt;- comb %&gt;% 
   mutate(model = map(data, dist_mod), 
-         resids = map2(data, model, add_residuals)) 
-mods</code></pre>
-<pre><code>## # A tibble: 9 x 4
-##   districtname data                 model    resids              
-##   &lt;chr&gt;        &lt;list&gt;               &lt;list&gt;   &lt;list&gt;              
-## 1 district_1   &lt;tibble [183 × 4]&gt;   &lt;S3: lm&gt; &lt;tibble [183 × 5]&gt;  
-## 2 district_2   &lt;tibble [319 × 4]&gt;   &lt;S3: lm&gt; &lt;tibble [319 × 5]&gt;  
-## 3 district_3   &lt;tibble [1,162 × 4]&gt; &lt;S3: lm&gt; &lt;tibble [1,162 × 5]&gt;
-## 4 district_4   &lt;tibble [45 × 4]&gt;    &lt;S3: lm&gt; &lt;tibble [45 × 5]&gt;   
-## 5 district_5   &lt;tibble [141 × 4]&gt;   &lt;S3: lm&gt; &lt;tibble [141 × 5]&gt;  
-## 6 district_6   &lt;tibble [1,037 × 4]&gt; &lt;S3: lm&gt; &lt;tibble [1,037 × 5]&gt;
-## 7 district_7   &lt;tibble [200 × 4]&gt;   &lt;S3: lm&gt; &lt;tibble [200 × 5]&gt;  
-## 8 district_8   &lt;tibble [1,201 × 4]&gt; &lt;S3: lm&gt; &lt;tibble [1,201 × 5]&gt;
-## 9 district_9   &lt;tibble [36 × 4]&gt;    &lt;S3: lm&gt; &lt;tibble [36 × 5]&gt;</code></pre>
+         resids = map2(data, model, add_residuals)) </code></pre>
+<p>Finally I used <code>dplyr:unnest</code> to open up the dataset so that each residual value had it’s own row.</p>
 <pre class="r"><code>resids &lt;- mods %&gt;% 
   unnest(resids)</code></pre>
-<p>The original dataset did not include distance from three scores for any subgroup that had less than 11 students.</p>
+<p><strong>A note on missing values</strong></p>
+<p><strong>The original dataset did not include distance from three scores for any subgroup that had less than 11 students. This is a typical practice with education data and is usually done to maintain student confidentiality. Consdquently, there is a pretty sizeable amount of subgroups that are missing distance from three scores.</strong></p>
+<div id="visualizing-the-differences-between-prediction-and-actual-datapoints" class="section level1">
+<h1>Visualizing the Differences Between Prediction and Actual Datapoints</h1>
+<p>If we create a plot that has the distance from three scores (our predictor) in the x-axis and the residuals (a.k.a., difference between predicted and actual values in the y-axis) for each district, we get the following:</p>
 <pre class="r"><code>ggplot(data = resids, aes(x = currstatus_math, y = resid)) + 
   geom_point(alpha = .25) + 
   facet_wrap(~ districtname) + 
@@ -78,3 +64,4 @@ mods</code></pre>
 <pre><code>## Warning: Removed 1356 rows containing missing values (geom_point).</code></pre>
 <p><img src="/post/2018-03-28-california-school-dashboards-part-3-modeling-the-data_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
 <p>When the residuals are negative, the actual datapoint was lower than what the model thought it should be.</p>
+</div>
