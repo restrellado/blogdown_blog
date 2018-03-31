@@ -12,11 +12,16 @@ draft: TRUE
 
 
 
+<p><em>This is part three of a three part series where I work with California School Dashboard data by cleaning, visualizaing, and exploring through modeling. You can read the <a href="https://ryanestrellado.netlify.com/post/analyzing-california-school-dashboards-part-1-cleaning/">first part of this series</a>, which shows one way to clean and prepare the data, and <a href="http://ryanestrellado.netlify.com/post/california-school-dashboards-part-2-visualizing-the-data/">the second part of the series</a>, which shows a way to visualize the data .</em></p>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
 <p>Now that we’ve looked at cleaning the California School Dashboard data and exploring it through visualization, we’re going to explore it further by looking at the relationship between math and English language arts scores across subgroups in nine school districts. We’ll do this by fitting a line through those data points and visually assessing how well the actual data points resemble that line.</p>
 <p>As in the previous two posts, I anonymized the datasets. I won’t include that process here to keep things brief, but if you’re interested in the procedure I used you can <a href="https://github.com/restrellado/ca_dashboards_anon/blob/master/join_ela_math.R">view the script</a> and <a href="https://github.com/restrellado/data_for_blog">cleaned data</a> on my GitHub page.</p>
-<p>The main number we will be looking at in this analysis is the California School Dashboard’s “distance from three” score. This is the same score we looked at when we visualized the dashboard data <a href="http://ryanestrellado.netlify.com/post/california-school-dashboards-part-2-visualizing-the-data/">in part of two of this series</a>. For review, recall that the distance from three score for English languae arts is the</p>
+<p>This approach is inspired by <a href="https://twitter.com/hadleywickham">Hadley Wickham’s</a> “many models” demonstration, which I’ll link to at the end of the post.</p>
+</div>
+<div id="distance-from-three" class="section level2">
+<h2>Distance from Three</h2>
+<p>The main number we will be looking at in this analysis is the California School Dashboard’s “distance from three” score. This is the same score we looked at when we visualized the dashboard data <a href="http://ryanestrellado.netlify.com/post/california-school-dashboards-part-2-visualizing-the-data/">in part of two of this series</a>. For review, recall that the distance from three score for English language arts is the</p>
 <blockquote>
 <p>average distance from level 3 of students who took the Smarter Balanced summative assessment in ELA</p>
 </blockquote>
@@ -25,6 +30,14 @@ draft: TRUE
 <div id="do-math-scores-predict-english-language-arts-scores" class="section level2">
 <h2>Do Math Scores Predict English Language Arts Scores?</h2>
 <p>Let’s explore the first of our nine districts just to see if there’s any hint of a relationship between the math scores and ELA scores. If we plot the distance from three score of math on the x-axis and the distance from three score of English language arts for each school’s subgroup in the first of our nine districts, we see that there is a pretty clear relationship:</p>
+<pre class="r"><code>all_files[[1]] %&gt;% 
+  # Remove school level datapoints 
+  filter(!is.na(schoolname)) %&gt;%
+  ggplot(aes(x = currstatus_math, y = currstatus_ela)) + 
+  geom_point() + 
+  geom_smooth(method = &quot;lm&quot;) +
+  labs(title = &quot;Distance from Three: Math vs. English Language Arts&quot;, 
+       x = &quot;Math Dist from Three&quot;, y = &quot;ELA Dist from Three&quot;)</code></pre>
 <pre><code>## Warning: Removed 37 rows containing non-finite values (stat_smooth).</code></pre>
 <pre><code>## Warning: Removed 37 rows containing missing values (geom_point).</code></pre>
 <p><img src="/post/2018-03-28-california-school-dashboards-part-3-modeling-the-data_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
@@ -33,8 +46,8 @@ draft: TRUE
 </div>
 <div id="fitting-the-model-to-nine-districts" class="section level2">
 <h2>Fitting the Model to Nine Districts</h2>
-<p>In order to compare this model fit to all nine of our districts, I arranged the data so that each row was a district and their dataset. I then fit a linear model to each district and calculated the differences between the predicted values and actual values. These differences are stored in a column called <code>resid</code> (short for <a href="https://en.wikipedia.org/wiki/Errors_and_residuals">residuals</a>).</p>
-<p>Here is some of the code for getting that done. Feel free to skip to the plots if you want to start examing the results.</p>
+<p>In order to compare this model fit to all nine of our districts, I arranged the data so that each row was a district and their dataset. I then fit a linear model to each district and calculated the differences between the predicted values and actual values. These differences are stored in a column called <code>resid</code>, which is short for <a href="https://en.wikipedia.org/wiki/Errors_and_residuals">residuals</a>. We’ll talk a little more about residuals later.</p>
+<p>Here is some of the code for arranging the data. Feel free to skip to the plots if you want to start examing the results.</p>
 <p>I used a function for the linear model so I can apply it to all nine datasets using the <code>purrr</code> package.</p>
 <pre class="r"><code>dist_mod &lt;- function(d) {
   lm(currstatus_ela ~ currstatus_math, data = d)
@@ -47,8 +60,8 @@ draft: TRUE
 <pre class="r"><code>resids &lt;- mods %&gt;% 
   unnest(resids)</code></pre>
 </div>
-<div id="the-plots" class="section level1">
-<h1>The Plots</h1>
+<div id="the-plots" class="section level2">
+<h2>The Plots</h2>
 <div id="visualizing-differences-between-subgroups" class="section level3">
 <h3>Visualizing Differences Between Subgroups</h3>
 <p>Recall that our goal here is to see if there are any differences in our math vs. ELA relationship when we look at subgroups. The way we’ll do that is to compare how wrong our linear model got it for each subgroup.</p>
@@ -87,15 +100,15 @@ draft: TRUE
 <p>Now it’s a little clearer that there might be some differences in the way the model fits for the ELO subgroup. We won’t go into the differences in the way the California Department of Education distinguishes ELs from ELOs, but it’s important to note that in a real analysis it would be critical to understand how these subgroups are defined. You can read more about the <a href="https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf">definition of EL and ELO in this CDE document</a>.</p>
 </div>
 </div>
-<div id="practical-next-steps" class="section level1">
-<h1>Practical Next Steps</h1>
-<p>Now that we have this information, what do we do with it? Here are some practical next steps for building on the analysis turning it into meaningful action:</p>
-<p>Build consensus on conclusions by examining other sources of data. Questions to ask might be:</p>
+<div id="practical-next-steps" class="section level2">
+<h2>Practical Next Steps</h2>
+<p>Now that we have this information, what do we do with it? Here are some practical next steps for building on the analysis like this and turning it into meaningful action:</p>
+<p>Build consensus on conclusions by examining other sources of data. Ask questions like:</p>
 <ul>
-<li>Do these findings resonate with the accounts of teachers?</li>
 <li>Are there are quantitative and anecdotal datasets, like local measures or weekly quiz scores that reinforce or challenge these findings?</li>
+<li>Do these findings resonate with the accounts of teachers?</li>
 </ul>
-<p>Look at the underlying instrutional processes that might logically drive these findings. Ask questions like:</p>
+<p>Look at the underlying instructional processes that might logically drive these findings. Ask questions like:</p>
 <ul>
 <li>What are the similarities and differences in the instructional practices across subgroups?</li>
 <li>How can we change instructional practices, even if in small ways, to achieve the outcomes we want for all subgroups?</li>
@@ -104,5 +117,13 @@ draft: TRUE
 <ul>
 <li>Once we implement changes, is a repeat of this analysis useful to measure the impact?</li>
 <li>If our plan was working, how would we expect the residual data to look different from these results?</li>
+</ul>
+</div>
+<div id="more-on-the-many-models-approach" class="section level2">
+<h2>More on the Many Models Approach</h2>
+<p>Here’s more on the many models approach as demonstrated by <a href="https://twitter.com/hadleywickham">Hadley Wickham</a>:</p>
+<ul>
+<li><a href="http://r4ds.had.co.nz/many-models.html">Many Models chapter of R for Data Science</a></li>
+<li><a href="https://youtu.be/rz3_FDVt9eg">Hadley Wickham: Managing Many Models With R</a></li>
 </ul>
 </div>

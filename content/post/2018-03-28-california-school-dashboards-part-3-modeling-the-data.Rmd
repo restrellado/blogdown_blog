@@ -21,6 +21,8 @@ library(spedtools)
 opts_chunk$set(echo = FALSE, message = FALSE)
 ```
 
+*This is part three of a three part series where I work with California School Dashboard data by cleaning, visualizaing, and exploring through modeling. You can read the [first part of this series](https://ryanestrellado.netlify.com/post/analyzing-california-school-dashboards-part-1-cleaning/), which shows one way to clean and prepare the data, and [the second part of the series](http://ryanestrellado.netlify.com/post/california-school-dashboards-part-2-visualizing-the-data/), which shows a way to visualize the data .* 
+
 ## Introduction 
 
 Now that we've looked at cleaning the California School Dashboard data and 
@@ -33,6 +35,10 @@ As in the previous two posts, I anonymized the datasets. I won't include that pr
 here to keep things brief, but if you're interested in the procedure I used you can 
 [view the script](https://github.com/restrellado/ca_dashboards_anon/blob/master/join_ela_math.R) 
 and [cleaned data](https://github.com/restrellado/data_for_blog) on my GitHub page. 
+
+This approach is inspired by [Hadley Wickham's](https://twitter.com/hadleywickham) "many models" demonstration, which I'll link to at the end of the post. 
+
+## Distance from Three
 
 ```{r}
 # Read data 
@@ -55,7 +61,7 @@ all_files <- urls %>%
 
 The main number we will be looking at in this analysis is the California School 
 Dashboard's "distance from three" score. This is the same score we looked at when 
-we visualized the dashboard data [in part of two of this series](http://ryanestrellado.netlify.com/post/california-school-dashboards-part-2-visualizing-the-data/). For review, recall that the distance from three score for English languae arts is the
+we visualized the dashboard data [in part of two of this series](http://ryanestrellado.netlify.com/post/california-school-dashboards-part-2-visualizing-the-data/). For review, recall that the distance from three score for English language arts is the
 
 >average distance from level 3 of students who took the Smarter Balanced summative assessment in ELA
 
@@ -71,7 +77,7 @@ distance from three score of math on the x-axis and the distance from three
 score of English language arts for each school's subgroup in the first of our 
 nine districts, we see that there is a pretty clear relationship: 
 
-```{r}
+```{r echo=TRUE}
 all_files[[1]] %>% 
   # Remove school level datapoints 
   filter(!is.na(schoolname)) %>%
@@ -99,8 +105,9 @@ to the nine districts we're analyzing.
 In order to compare this model fit to all nine of our districts, I arranged the 
 data so that each row was a district and their dataset. I then fit a linear model 
 to each district and calculated the differences between the predicted values 
-and actual values. These differences are stored in a column called `resid` 
-(short for [residuals](https://en.wikipedia.org/wiki/Errors_and_residuals)). 
+and actual values. These differences are stored in a column called `resid`, which is
+short for [residuals](https://en.wikipedia.org/wiki/Errors_and_residuals). We'll 
+talk a little more about residuals later. 
 
 ```{r}
 comb <- all_files %>% 
@@ -113,7 +120,7 @@ comb <- all_files %>%
   nest() 
 ```
 
-Here is some of the code for getting that done. Feel free to skip to the plots if 
+Here is some of the code for arranging the data. Feel free to skip to the plots if 
 you want to start examing the results. 
 
 I used a function for the linear model so I can apply it to all nine datasets 
@@ -141,7 +148,7 @@ resids <- mods %>%
   unnest(resids)
 ```
 
-# The Plots 
+## The Plots 
 
 ### Visualizing Differences Between Subgroups
 
@@ -201,17 +208,17 @@ resids %>%
 
 Now it's a little clearer that there might be some differences in the way the model fits for the ELO subgroup. We won't go into the differences in the way the California Department of Education distinguishes ELs from ELOs, but it's important to note that in a real analysis it would be critical to understand how these subgroups are defined. You can read more about the [definition of EL and ELO in this CDE document](https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf). 
 
-# Practical Next Steps 
+## Practical Next Steps 
 
 Now that we have this information, what do we do with it? Here are some practical next steps 
-for building on the analysis turning it into meaningful action: 
+for building on the analysis like this and turning it into meaningful action: 
 
-Build consensus on conclusions by examining other sources of data. Questions to ask might be: 
+Build consensus on conclusions by examining other sources of data. Ask questions like: 
  
- - Do these findings resonate with the accounts of teachers? 
  - Are there are quantitative and anecdotal datasets, like local measures or weekly quiz scores that reinforce or challenge these findings? 
+ - Do these findings resonate with the accounts of teachers? 
  
-Look at the underlying instrutional processes that might logically drive these findings. Ask 
+Look at the underlying instructional processes that might logically drive these findings. Ask 
 questions like: 
  
  - What are the similarities and differences in the instructional practices across subgroups? 
@@ -222,3 +229,9 @@ Decide what to try and how to measure. Ask questions like:
  - Once we implement changes, is a repeat of this analysis useful to measure the impact? 
  - If our plan was working, how would we expect the residual data to look different from these results? 
  
+## More on the Many Models Approach 
+
+Here's more on the many models approach as demonstrated by [Hadley Wickham](https://twitter.com/hadleywickham): 
+
+ - [Many Models chapter of R for Data Science](http://r4ds.had.co.nz/many-models.html) 
+ - [Hadley Wickham: Managing Many Models With R](https://youtu.be/rz3_FDVt9eg)
