@@ -21,6 +21,19 @@ library(spedtools)
 opts_chunk$set(echo = FALSE, message = FALSE)
 ```
 
+## Introduction 
+
+Now that we've looked at cleaning the California School Dashboard data and 
+exploring it through visualization, we're going to explore it further by looking 
+at the relationship between math and English language arts scores across subgroups 
+in nine school districts. We'll do this by fitting a line through those data points 
+and visually assessing how well the actual data points resemble that line. 
+
+As in the previous two posts, I anonymized the datasets. I won't include that process 
+here to keep things brief, but if you're interested in the procedure I used you can 
+[view the script](https://github.com/restrellado/ca_dashboards_anon/blob/master/join_ela_math.R) 
+and [cleaned data](https://github.com/restrellado/data_for_blog) on my GitHub page. 
+
 ```{r}
 # Read data 
 urls <- c(
@@ -40,9 +53,23 @@ all_files <- urls %>%
   set_names(., nm = map_chr(., ~unique(.$districtname)))
 ```
 
-If we plot the distance from three score of math on the x-axis and the distance 
-from three score of English language arts for each school's subgroup in 
-`district_1`, we see that there is a pretty clear linear pattern. 
+The main number we will be looking at in this analysis is the California School 
+Dashboard's "distance from three" score. This is the same score we looked at when 
+we visualized the dashboard data [in part of two of this series](http://ryanestrellado.netlify.com/post/california-school-dashboards-part-2-visualizing-the-data/). For review, recall that the distance from three score for English languae arts is the
+
+>average distance from level 3 of students who took the Smarter Balanced summative assessment in ELA
+
+If that number is positive the student subgroup performed higher than level three 
+on average. If that number is negative, the student subgroup performed lower than level 
+three on average. There's more on that [on the CDE website](https://www.cde.ca.gov/ta/ac/cm/acadindcal.asp) if you'd like to investigate further. 
+
+## Do Math Scores Predict English Language Arts Scores? 
+
+Let's explore the first of our nine districts just to see if there's any hint 
+of a relationship between the math scores and ELA scores. If we plot the 
+distance from three score of math on the x-axis and the distance from three 
+score of English language arts for each school's subgroup in the first of our 
+nine districts, we see that there is a pretty clear relationship: 
 
 ```{r}
 all_files[[1]] %>% 
@@ -55,14 +82,19 @@ all_files[[1]] %>%
        x = "Math Dist from Three", y = "ELA Dist from Three")
 ```
 
+Here's another way to think of it: generally speaking, a subgroup's difference from 
+three score in math can help us predict that same subgroup's difference from three score 
+in English language arts. 
+
 The line drawn through the plot is the model fit. That means that it goes through 
 the plot in a straight line to best follow the relationship between the math 
 distance of three and the English language arts distance from three in this 
 dataset. This relationship is quantified by the model, but we won't go into that 
-here because we're more interested in how well this model predicted scores for 
-each school's subgroup. We're interested in looking at the differences between 
-predictions and actual data points and how that looks similar or different for 
-each school's subgroups. 
+here because we're more interested in what this relationship looks like for 
+different subgroups. But before we get to that, we will need to fit the model 
+to the nine districts we're analyzing. 
+
+## Fitting the Model to Nine Districts 
 
 In order to compare this model fit to all nine of our districts, I arranged the 
 data so that each row was a district and their dataset. I then fit a linear model 
@@ -109,9 +141,17 @@ resids <- mods %>%
   unnest(resids)
 ```
 
-**A note on missing values** 
+# The Plots 
 
-**The original dataset did not include distance from three scores for any subgroup that had less than 11 students. This is a typical practice with education data and is usually done to maintain student confidentiality. Consdquently, there is a pretty sizeable amount of subgroups that are missing distance from three scores.**
+### Visualizing Differences Between Subgroups
+
+Recall that our goal here is to see if there are any differences in our math vs. 
+ELA relationship when we look at subgroups. The way we'll do that is to compare how 
+wrong our linear model got it for each subgroup. 
+
+But first a note on missing values: 
+
+**The original dataset did not include distance from three scores for any subgroup that had less than 11 students. This is a typical practice with education data and is usually done to maintain student confidentiality. Consdquently, there is a pretty sizeable amount of subgroups that are missing distance from three scores. These missing values will be represented as warning messages in R when make our plots. **
 
 ```{r results='hide'}
 resids %>% map(~sum(is.na(.)))
@@ -122,11 +162,8 @@ resids %>%
   filter(is.na(currstatus_ela) | is.na(currstatus_math))
 ```
 
-# Visualizing the Differences Between Prediction and Actual Datapoints 
-
-If we create a plot that has the distance from three scores (our predictor) in 
-the x-axis and the residuals (a.k.a., difference between predicted and actual 
-values in the y-axis) for each district, we get the following: 
+So let's see what happens when we remove the math vs. ELA pattern from each dataset and see what we have left over. These are called residual values. ([here's Wikipedia for more reading on residuals](https://en.wikipedia.org/wiki/Errors_and_residuals)). If we create a plot of these leftover 
+values across distance from three math scores, we get this: 
 
 ```{r echo=TRUE}
 ggplot(data = resids, aes(x = currstatus_math, y = resid)) + 
@@ -137,6 +174,8 @@ ggplot(data = resids, aes(x = currstatus_math, y = resid)) +
        y = "Residuals")
 ```
 
+So what does this tell us? The dots closest to `y = 0` represents where the model predicted ELA results better. A residual of 0 would suggest that there was 0 difference between the predicted and actual values. So the next question is can we see any patterns in leftover values when we examine subgroups? To answer that question we'll color each subgroup in the plot:
+
 ```{r echo=TRUE}
 ggplot(data = resids, aes(x = currstatus_math, y = resid, color = studentgroup)) + 
   geom_point(alpha = .25) + 
@@ -146,8 +185,7 @@ ggplot(data = resids, aes(x = currstatus_math, y = resid, color = studentgroup))
        y = "Residuals")
 ```
 
-
-[Definition of EL and ELO](https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf) 
+You can start to see some hints that the subgroup "English Learners Only" had larger residual values in some districts, particularly in `district_2` and `district_7`. Recall that leftover values below zero suggest the subgroup had a *lower value than expected from the model*. Let's follow this line of questioning and see if we can visually inspect this difference a little more. To do that, we'll define each subgroup datapoint as either "English Learners Only" or "not English Learners Only": 
 
 ```{r echo=TRUE}
 resids %>% 
@@ -161,5 +199,26 @@ resids %>%
        color = "")
 ```
 
-When the residuals are negative, the actual datapoint was lower than what the 
-model thought it should be. 
+Now it's a little clearer that there might be some differences in the way the model fits for the ELO subgroup. We won't go into the differences in the way the California Department of Education distinguishes ELs from ELOs, but it's important to note that in a real analysis it would be critical to understand how these subgroups are defined. You can read more about the [definition of EL and ELO in this CDE document](https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf). 
+
+# Practical Next Steps 
+
+Now that we have this information, what do we do with it? Here are some practical next steps 
+for building on the analysis turning it into meaningful action: 
+
+Build consensus on conclusions by examining other sources of data. Questions to ask might be: 
+ 
+ - Do these findings resonate with the accounts of teachers? 
+ - Are there are quantitative and anecdotal datasets, like local measures or weekly quiz scores that reinforce or challenge these findings? 
+ 
+Look at the underlying instrutional processes that might logically drive these findings. Ask 
+questions like: 
+ 
+ - What are the similarities and differences in the instructional practices across subgroups? 
+ - How can we change instructional practices, even if in small ways, to achieve the outcomes we want for all subgroups? 
+ 
+Decide what to try and how to measure. Ask questions like: 
+ 
+ - Once we implement changes, is a repeat of this analysis useful to measure the impact? 
+ - If our plan was working, how would we expect the residual data to look different from these results? 
+ 
