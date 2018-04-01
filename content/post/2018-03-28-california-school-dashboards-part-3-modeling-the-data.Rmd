@@ -205,7 +205,7 @@ resids %>%
        color = "")
 ```
 
-Now it's a little clearer that there might be some differences in the way the model fits for the ELO subgroup. We won't go into the differences in the way the California Department of Education distinguishes ELs from ELOs, but it's important to note that in a real analysis it would be critical to understand how these subgroups are defined. You can read more about the [definition of EL and ELO in this CDE document](https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf). 
+Now it's a little clearer that there might be some differences in the way the model fits for the ELO subgroup. We won't go into the differences in the way the California Department of Education distinguishes ELs from ELOs, but if we were continuing this line of inquiry it would be critical to understand how these subgroups are defined. You can read more about the [definition of EL and ELO in this CDE document](https://www.cde.ca.gov/ta/ac/cm/documents/dashboardguidespring17.pdf). 
 
 ## Practical Next Steps 
 
