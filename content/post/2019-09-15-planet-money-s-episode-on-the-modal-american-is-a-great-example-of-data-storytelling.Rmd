@@ -1,0 +1,131 @@
+---
+title: Planet Money's Episode on the Modal American is a Great Example of Data Storytelling
+author: Ryan Estrellado
+date: '2019-09-15'
+slug: planet-money-s-episode-on-the-modal-american-is-a-great-example-of-data-storytelling
+categories: []
+tags: [no_code]
+---
+
+# Introduction 
+
+In August of 2019 Planet Money posted an episode about using statistics to understand who the typical American is. 
+[The episode was called *The Modal American*](https://www.npr.org/2019/08/28/755191639/episode-936-the-modal-american) and was a story about using the mode--a statistic that describes the most common value in a dataset--to finally describe a human being you might see on the street, not a composite of different average numbers. 
+
+I love this stuff! I love anything that does a deep dive on statistical techniques. But what felt different about this story is that *it seemed like something non-data science folks would love*. Friends and family don't often come to me and say, "That data science thing you sent me? Loved it." Data scientists love data science stories because they've got a built-in point of entry--love of data science. Non-data scientists don't have that point of entry, so it's harder to see themselves in the story. Data scientists immediately connect with a "how I did this analysis" narrative because they themselves do analyses. Non-data scientists don't have this immediate connection, so if we want to write something for them we need to create that connection through a good story.
+
+In his book [*Show Your Work!*](https://austinkleon.com/show-your-work/) Austin Kleon writes about different kinds of story-telling structures. He points to former Pixar storyboard artist Emma Coats' structure for fairy tale: 
+
+>"Once upon a time, there was ____. Every day, ____. One day, ____. Because of that, ____. Because of that, ____. Until finally, ____." 
+
+The Planet Money story isn't an inspirational fairy tale (unless like me, you're also obsessed with unlocking the opaque art of telling good data stories. In that case yes, it is very much an inspirational fairy tale). And yet Coats' structure helps us understand how such a complex data analysis can still connect with non-data scientists.
+
+Indeed Austin Kleon suggests putting telling any story through Coats' structure and seeing how it turns out. We can do just that with the parts of the Planet Money episode: 
+
+>"Once upon a time, there were two podcast hosts. Every day, they read news stories about "the average American". One day, they wondered if there was a better way to describe a typical American you'd run into everyday. Because of that, they contacted a data journalist to search for a better statistic. Because of that, they discovered that identifying the typical American is harder than they thought. Until finally, they discovered the typical American was surprising and not surprising at the same time. 
+
+Let's have a closer look at each part and learn together about what makes this data story so good. 
+
+# Part 1: Two Podcast Hosts and a Problem 
+
+>"Once upon a time, there were two podcast hosts. Every day, they read news stories about "the average American". One day, they wondered if there was a better way to describe a typical American you'd run into everyday.
+
+Part of what makes a story good is that it invites the audience to imagine themselves in the story. When this happens, they can relate to a character, pretend to relate to a character, or wish they weren't a character. They have a person in the story they connect with in some way. The first chance to do this comes in the opening seconds of the podcast, where hosts [Kenny Malone](https://twitter.com/RadioMalone) and [Jacob Goldstein](https://twitter.com/jacobgoldstein) introduce themselves as two people curious and slightly frustrated by how poorly the term *average American* describes what it should describe, the *typical* American. They spend the first few minutes exploring the problem: they read news stories about the average American, but the average American doesn't sound like an actual person. 
+
+At around 00:14, Jacob explains his pet peeve about using the term "average" American: 
+
+>I think people don't mean average American. I think what they actually mean is the person, if I walk outside to America, who is the person I'm most likely to run into? The person who there is more of that person than any other person. That ain't the average. 
+
+...and they go back and forth on what that's actually called:
+
+>It's also not the median, smart guy
+
+All this invites the audience to relate to them as people. It gets the audience hooked by the problem they're about to pursue. Non-data scientists don't tend to be interested in discussing the statistical properties of means, medians, and modes (if you are a non-data scientist who *does* enjoy this, consider a career change). So if Kenny and Jacob want to entertain and inform with this story, they need to give the audience something they can emotionally connect with. In this case, it's the curiosity and slight frustration with how poorly the term "average" describes real life. 
+
+# Part 2: A Likely Hero
+
+>"Because of that, they contacted a data journalist to search for a better statistic."
+
+Every story needs a hero, and at 1:55 Jacob and Kenny introduce New York Times journalist [Ben Casselman](https://twitter.com/bencasselman). Ben's introduction brings the audience to the next part of the story, where Jacob, Kenny, and Ben learn they share the same curiosity and frustration with how we discuss the typical American. Ben shares an example of a particularly confounding description of an average American. It described a person who had labor income and social security income--a highly unlikely person in the real world.
+
+The hosts also introduce Ben's sidekick, the underrated statistic known as the mode. The mode sets the hook for the next section by promising to win the quest for a more intuitive statistic. So now the quest is given, the hero is introduced, and the adventure begins: 
+
+>Ben do you think maybe you could help me find the modal American?
+>Ben: Yeah! I think this could be really fun
+
+# Part 3: It's Harder Than We Thought 
+
+>"Because of that, they discovered that this describing the typical American is harder than they thought."
+
+Here's a relatable phenomenon in the human experience: have you ever set out to do a simple project that, upon starting, turned out to be not that simple? Me too. Jacob, Kenny, and Ben show us that finding the modal American is just like that. 
+
+My ears open up and rotate like nerd radars during this part of the story. This is precisely the part of data analysis writing where I lose all but those in my data science tribe. In my own writing, I unpack complexity for myself and other data scientists by showing lots and lots of code. Our hosts unpack complexity *by inviting the audience in to relate.* They don't show code. Instead, they show what the experience of this process is like. 
+
+They can't just average out all Americans because they end up with imaginary people, like super young folks who are married or folks earning income and social security at the same time. At 11:34, Ben shares a relatable example: 
+
+>I can give a real example if you want one. The most common single age is 26 years old. The most common single marital status is married. Except most 26 year olds are not married. 
+
+And at 12:10, our hosts give even more shape to the problem by talking about the magnitude of numbers needed to find a solution: 
+
+>It just means that we have to do something a lot more complicated. Our methodology here is that we have to take all of these eight variables... and we basically need to make a bucket of every single combination of these variables.
+
+They get specific about the size of the task: 
+
+>...and it's every single combination. We're going to end up having over 3000 buckets that we have to sort the country into. 
+
+As a medium, podcasting draws the audience in by communicating emotion in their voices. It's hard to convey in writing, but what is so inviting here is that Jacob and Kenny reason through the method the way most people would. Code invites data scientists into the story by conveying as method. Emotion draws non-data scientists into the story by conveying an experience.
+
+# Part 4: Surprising But Not Surprising (It's About People)
+
+>"Until finally, they discovered the typical American was surprising and not surprising at the same time."
+
+Ben uses his data science skills to go out and fill over 3000 profile buckets. He comes back and they discover something unexpected. The modal American is a child! Children fall into fewer buckets because they share more qualities relative to adults. Most school children aren't married and don't have an income, for example.
+
+So who is the modal *adult* American? It turns out the modal American is a Caucasian male. Given [America's demographics](https://www.wolframalpha.com/input/?i=American+population+by+race), this is not surprising. So how do the hosts share this finding so the audience can see themselves in the story? They focus on something everyone can connect with: people. 
+
+Rather than describe the modal American, the hosts actually talk to a person who has the demographic qualities of the modal American. The interviewee--Dan--adds to the story by exclaiming his own surprise at who the modal American is. At 18:11, when asked if the findings surprise him, he says
+
+>When I stop and think about it, it shouldn't, but it really does 
+
+As you read your favorite data journalists, notice how often they explain data by sharing stories about people.
+
+# Part 5: Practical Lessons
+
+I don't make podcasts, but I do data analysis like the one Ben did for this story. What's more, I often share that data analyses with non-data scientists. Here are some practical lessons we can take from this podcast episode and apply to our data writing and talks. 
+
+*Invite your audience to see themselves in the story.* 
+
+Planet Money used a cast of characters and conversational style that a wider audience can relate to. In their story, they invited the audience to see themselves as characters like Jacob and Kenny. We see this in the time they spent talking about their dissatisfaction at how poorly the average American reflects actual people. We also see it in the time they spent reasoning through Ben's analytic strategy. These are discussions that the wider Planet Money audience, not just data scientists, might find themselves having in normal life if they faced the same dilemma.
+
+So who is your audience? Are they data scientists, community members, students, or organization leaders? What has their experience been like consuming data analysis? Based on that, how can you structure the story so they see themselves as a character in it? 
+
+Here's a fun exercise: what would this Planet Money story be like if it was on a data science podcast instead of Planet Money? 
+
+*Structure your story.* 
+
+Finding the modal American is a quest documented in R code. You can see it here on (Ben's GitHub page)[https://github.com/BenCasselman/planet_money]. But the code itself is not what makes this story great for most people. What makes the Planet Money episode a great story are the sequence of narrative parts that invite the audience to relate. In the Planet Money podcast, this was 
+
+ 1. Talking about how strange it is that we use averages to talk about the typical American. That leads to  
+ 1. Asking someone to help find a different way to talk about the typical American. That leads to  
+ 1. Discovering how complicated this project is.  And finally that leads to  
+ 1. Some surprises about who the typical American is  
+ 
+Before I give a talk or share analysis results, I think about who my audience is and how I can construct a story they see themselves in. For example, I did this before a recent talk I did for principals about downloading and analyzing datasets. I've got this scribbled in a notebook:
+
+>Once upon a time there was a principal. Every day she monitored student absences by hand-entering attendance records. Until one day she learned that she could get data out of her student system. That lead her to start working with the data in Excel spreadsheets. That lead her to do more monitoring. Until finally, she built an analysis routine that allowed her to help students who were having trouble getting to school. 
+
+This affects how I put the parts of the story together so I bring the audience with me chapter by chapter as I go through the talk. 
+
+Here's another one, this time for leadership in special education departments: 
+
+>Once upon a time there was a special education director. She worked every day to make a school system where all students succeed. One day, she met a student whose home life was very different from other students. That lead her to study outcomes for students who had a similar background. Because of that she learned many students from this background were not succeeding in their school system. That lead her to build new parts of the system to make outcomes for all students more equitable. 
+
+*Make it about people.* 
+
+The question about the modal American is as much about people as it is about methodology. I have this theory that the more varied your audience is, the more your story has to be about people. When I prepare a data analysis, folks often tell me they're more interested in the answer than about how I got there. Is it possible to tell a story about how you got the answer that is compelling to a wide audience?
+
+Jacob, Kenny, and Ben do it by spending less time on how how Ben discovered the modal American and more time on how *they experienced discovering the modal American.* If you want to write a how-to for data scientists, you can get away with explaining how to make three thousand American demographic buckets. If you want to write a story for a wider audience, you'll need to show what it felt like to make the three thousand buckets.
+
+When data scientists read a blow-by-blow data analysis write-up, they're invited into the story. They know what it feels like to be people working on a data analysis. The path to connecting with the human elements of the story is already built and well-traveled. But to non-data scientists, the events in the story need to be more explicitly centered around a relatable human experience.
+
+I'll continue on my own quest to tell better data stories. If you can help me by sharing more great examples like this Planet Money episode or by sharing your own data stories, find me on [Twitter](https://twitter.com/RyanEs) and [LinkedIn](https://linkedin.com/ryanestrellado) and let's connect!
