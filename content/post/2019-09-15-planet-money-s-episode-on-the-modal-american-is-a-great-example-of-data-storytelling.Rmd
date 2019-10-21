@@ -103,7 +103,7 @@ Here's a fun exercise: what would this Planet Money story be like if it was on a
 
 *Structure your story.* 
 
-Finding the modal American is a quest documented in R code. You can see it here on (Ben's GitHub page)[https://github.com/BenCasselman/planet_money]. But the code itself is not what makes this story great for most people. What makes the Planet Money episode a great story are the sequence of narrative parts that invite the audience to relate. In the Planet Money podcast, this was 
+Finding the modal American is a quest documented in R code. You can see it here on [Ben's GitHub page](https://github.com/BenCasselman/planet_money). But the code itself is not what makes this story great for most people. What makes the Planet Money episode a great story are the sequence of narrative parts that invite the audience to relate. In the Planet Money podcast, this was 
 
  1. Talking about how strange it is that we use averages to talk about the typical American. That leads to  
  1. Asking someone to help find a different way to talk about the typical American. That leads to  
