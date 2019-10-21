@@ -20,7 +20,7 @@ In his book [*Show Your Work!*](https://austinkleon.com/show-your-work/) Austin 
 
 The Planet Money story isn't an inspirational fairy tale (unless like me, you're also obsessed with unlocking the opaque art of telling good data stories. In that case yes, it is very much an inspirational fairy tale). And yet Coats' structure helps us understand how such a complex data analysis can still connect with non-data scientists.
 
-Indeed Austin Kleon suggests putting telling any story through Coats' structure and seeing how it turns out. We can do just that with the parts of the Planet Money episode: 
+Austin Kleon suggests telling any story through Coats' structure and seeing how it turns out. We can do just that with the parts of the Planet Money episode: 
 
 >"Once upon a time, there were two podcast hosts. Every day, they read news stories about "the average American". One day, they wondered if there was a better way to describe a typical American you'd run into everyday. Because of that, they contacted a data journalist to search for a better statistic. Because of that, they discovered that identifying the typical American is harder than they thought. Until finally, they discovered the typical American was surprising and not surprising at the same time. 
 
@@ -50,16 +50,15 @@ Every story needs a hero, and at 1:55 Jacob and Kenny introduce New York Times j
 
 The hosts also introduce Ben's sidekick, the underrated statistic known as the mode. The mode sets the hook for the next section by promising to win the quest for a more intuitive statistic. So now the quest is given, the hero is introduced, and the adventure begins: 
 
->Ben do you think maybe you could help me find the modal American?
->Ben: Yeah! I think this could be really fun
+>Ben do you think maybe you could help me find the modal American? Ben: Yeah! I think this could be really fun
 
 # Part 3: It's Harder Than We Thought 
 
->"Because of that, they discovered that this describing the typical American is harder than they thought."
+>"Because of that, they discovered that describing the typical American is harder than they thought."
 
 Here's a relatable phenomenon in the human experience: have you ever set out to do a simple project that, upon starting, turned out to be not that simple? Me too. Jacob, Kenny, and Ben show us that finding the modal American is just like that. 
 
-My ears open up and rotate like nerd radars during this part of the story. This is precisely the part of data analysis writing where I lose all but those in my data science tribe. In my own writing, I unpack complexity for myself and other data scientists by showing lots and lots of code. Our hosts unpack complexity *by inviting the audience in to relate.* They don't show code. Instead, they show what the experience of this process is like. 
+My ears open up and rotate like nerd radars during this part of the story. This is precisely the part of data analysis writing where I lose all in the audience but those in my data science tribe. In my own writing, I unpack complexity for myself and other data scientists by showing lots and lots of code. Instead, our hosts unpack complexity *by inviting the audience to relate.* They don't show code. Instead, they show what the experience of this process is like. 
 
 They can't just average out all Americans because they end up with imaginary people, like super young folks who are married or folks earning income and social security at the same time. At 11:34, Ben shares a relatable example: 
 
@@ -73,7 +72,7 @@ They get specific about the size of the task:
 
 >...and it's every single combination. We're going to end up having over 3000 buckets that we have to sort the country into. 
 
-As a medium, podcasting draws the audience in by communicating emotion in their voices. It's hard to convey in writing, but what is so inviting here is that Jacob and Kenny reason through the method the way most people would. Code invites data scientists into the story by conveying as method. Emotion draws non-data scientists into the story by conveying an experience.
+As a medium, podcasting draws the audience in by communicating emotion in their voices. It's hard to convey in writing, but what is so inviting here is that Jacob and Kenny reason through the method the way most people would. Code invites data scientists into the story by conveying a method. Emotion draws non-data scientists into the story by conveying an experience.
 
 # Part 4: Surprising But Not Surprising (It's About People)
 
@@ -91,11 +90,11 @@ As you read your favorite data journalists, notice how often they explain data b
 
 # Part 5: Practical Lessons
 
-I don't make podcasts, but I do data analysis like the one Ben did for this story. What's more, I often share that data analyses with non-data scientists. Here are some practical lessons we can take from this podcast episode and apply to our data writing and talks. 
+I don't make podcasts, but I do data analyses like the one Ben did for this story. What's more, I often share that data analyses with non-data scientists. Here are some practical lessons we can take from this podcast episode and apply to our data writing and talks. 
 
 *Invite your audience to see themselves in the story.* 
 
-Planet Money used a cast of characters and conversational style that a wider audience can relate to. In their story, they invited the audience to see themselves as characters like Jacob and Kenny. We see this in the time they spent talking about their dissatisfaction at how poorly the average American reflects actual people. We also see it in the time they spent reasoning through Ben's analytic strategy. These are discussions that the wider Planet Money audience, not just data scientists, might find themselves having in normal life if they faced the same dilemma.
+Planet Money used a cast of characters and conversational style that a wider audience can relate to. In their story, they invited the audience to see themselves as characters like Jacob and Kenny. We see this in the time they spent talking about their dissatisfaction with how poorly the average American reflects actual people. We also see it in the time they spent reasoning through Ben's analytic strategy. These are discussions that the wider Planet Money audience, not just data scientists, might find themselves having in normal life if they faced the same dilemma.
 
 So who is your audience? Are they data scientists, community members, students, or organization leaders? What has their experience been like consuming data analysis? Based on that, how can you structure the story so they see themselves as a character in it? 
 
@@ -103,9 +102,9 @@ Here's a fun exercise: what would this Planet Money story be like if it was on a
 
 *Structure your story.* 
 
-Finding the modal American is a quest documented in R code. You can see it here on [Ben's GitHub page](https://github.com/BenCasselman/planet_money). But the code itself is not what makes this story great for most people. What makes the Planet Money episode a great story are the sequence of narrative parts that invite the audience to relate. In the Planet Money podcast, this was 
+Finding the modal American is a quest documented in R code. You can see it here on [Ben's GitHub page](https://github.com/BenCasselman/planet_money). But the code itself is not what makes this story great for most people. What makes the Planet Money episode a great story is the sequence of narrative parts that invite the audience to relate. In the Planet Money podcast, this was 
 
- 1. Talking about how strange it is that we use averages to talk about the typical American. That leads to  
+ 1. Discussing about how strange it is that we use averages to talk about the typical American. That leads to  
  1. Asking someone to help find a different way to talk about the typical American. That leads to  
  1. Discovering how complicated this project is.  And finally that leads to  
  1. Some surprises about who the typical American is  
