@@ -25,7 +25,7 @@ I spent a recent morning at a virtual island concert celebrating the arrival of 
 
 In April of 2020, [Polygon published a fascinating story](https://www.polygon.com/2020/4/29/21238552/animal-crossing-new-horizons-acnh-switch-ugly-villagers-trading-amiibo-moving-out) about a trend in the Animal Crossing community: players were ousting villagers---cute animal non-player characters---from their island because of the way they looked or acted. 
 
-Using Animal Crossing datasets posted on Kaggle, I explored what makes some villagers desirable island residents, and what makes others [the object of fan mockery](https://twitter.com/xpatriciah/status/1245033802470166531). 
+Using Animal Crossing datasets posted on [Kaggle](https://www.kaggle.com/jessicali9530/animal-crossing-new-horizons-nookplaza-dataset), I explored what makes some villagers desirable island residents, and what makes others [the object of fan mockery](https://twitter.com/xpatriciah/status/1245033802470166531). 
 
 ## Villager Personality Types 
 
