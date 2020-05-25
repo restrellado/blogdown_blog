@@ -21,15 +21,15 @@ opts_chunk$set(echo = FALSE, message = FALSE)
 villagers <- read_csv("https://raw.githubusercontent.com/restrellado/animal_crossing/master/output/vil_ranks.csv")
 ```
 
-I spent a recent morning at a virtual island concert celebrating the arrival of a dog folk guitarist named K.K. Slider. The concert is a milestone in the game *Animal Crossing: New Horizons*, which has become odd comfort to me and others as during the COVID-19 stay-at-home orders. Demand of *Animal Crossing* caused the [Nintendo Switch to join toilet paper and cleaning wipes on the list of near-impossible things to acquire](https://www.polygon.com/2020/3/26/21195490/nintendo-switch-where-to-buy-sold-out-stock-amazon-best-buy-target-shortage-covid-19-coronavirus) during the pandemic. 
+I spent a recent morning at a virtual island concert celebrating the arrival of a dog folk guitarist named K.K. Slider. The concert is a milestone in the game *Animal Crossing: New Horizons*, which has become odd comfort to me and others during the COVID-19 stay-at-home orders. Demand for *Animal Crossing* caused the [Nintendo Switch to join toilet paper and cleaning wipes on the list of near-impossible things to acquire](https://www.polygon.com/2020/3/26/21195490/nintendo-switch-where-to-buy-sold-out-stock-amazon-best-buy-target-shortage-covid-19-coronavirus) during the pandemic. 
 
-In April of 2020, [Polygon published a fascinating story](https://www.polygon.com/2020/4/29/21238552/animal-crossing-new-horizons-acnh-switch-ugly-villagers-trading-amiibo-moving-out) about a trend in the Animal Crossing community: players are ousting villagers--cute animal non-player characters--from their island because of the way they looked or acted. 
+In April of 2020, [Polygon published a fascinating story](https://www.polygon.com/2020/4/29/21238552/animal-crossing-new-horizons-acnh-switch-ugly-villagers-trading-amiibo-moving-out) about a trend in the Animal Crossing community: players were ousting villagers---cute animal non-player characters---from their island because of the way they looked or acted. 
 
 Using Animal Crossing datasets posted on Kaggle, I explored what makes some villagers desirable island residents, and what makes others [the object of fan mockery](https://twitter.com/xpatriciah/status/1245033802470166531). 
 
 ## Villager Personality Types 
 
-But first, a note on personality types. There are eight personality types in Animal Crossing: big sister, cranky, jock, lazy, normal, peppy, smug, and snooty. These personalities were originally found in the code for older Animal Crossing games like *New Leaf* and *Pocket Camp*, then translated from Japanese to English. The categories are, at best, comically simple. For example, there's a personality type called “big sister” but, inexplicably, there's no personality type called “big brother.” The saving grace of this somewhat pejorative personality system–-I can’t recommend using “jock” or “lazy” as personality descriptions in other contexts–-is they’re used in a video game that's otherwise designed as a positive and escapist experience. But all the same, we should look [elsewhere](https://projects.fivethirtyeight.com/personality-quiz/) when talking about *actual* personalities. 
+But first, a note on personality types. There are eight personality types in Animal Crossing: big sister, cranky, jock, lazy, normal, peppy, smug, and snooty. These personalities were originally found in the code for older Animal Crossing games like *New Leaf* and *Pocket Camp*, then translated from Japanese to English. The categories are, at best, comically simple. For example, there's a personality type called “big sister” but, inexplicably, there's no personality type called “big brother.” The saving grace of this somewhat pejorative personality system---I can’t recommend using “jock” or “lazy” as personality descriptions in other contexts---is they’re used in a video game that's otherwise designed as a positive and escapist experience. But all the same, we should look [elsewhere](https://projects.fivethirtyeight.com/personality-quiz/) when talking about *actual* personalities. 
 
 ## The Wish Score 
 
@@ -141,6 +141,6 @@ villagers %>%
        caption = "data: Nook Plaza and Nook Market")
 ```
 
-Personally, my favorite villager is a chicken named Goose. I don't particularly care that he's obssessed with fitness (and he is obsessed--once he told me he worked out so hard he fainted). The fact that he's a chicken doesn't give me any strong feelings. Goose was the first villager to set up camp on my island as my family and I spent our first few evenings locked down. It's hard to imagine my island without him. 
+Personally, my favorite villager is a chicken named Goose. I don't particularly care that he's obssessed with fitness (and he is obsessed---once he told me he worked out so hard he fainted). The fact that he's a chicken doesn't give me any strong feelings. Goose was the first villager to set up camp on my island as my family and I spent our first few evenings locked down. It's hard to imagine my island without him. 
 
 *You can find all the code for this analysis on my [GitHub account](https://github.com/restrellado/animal_crossing). Thank you to Nook Plaza for collecting the data and to Kaggle for hosting it.*
