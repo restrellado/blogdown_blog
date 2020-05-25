@@ -33,7 +33,7 @@ But first, a note on personality types. There are eight personality types in Ani
 
 ## The Wish Score 
 
-To learn more about why players like and dislike certain villagers, we need a way to quantify a villager's desirability. [nook.market](nook.market) is a website where Animal Crossing players go to exchange villagers and furniture for bells, the in-game currency. On the website, players can view all the villagers in a list, sorted by [“most wished for”](https://nook.market/categories/257-villagers?sort=num_wishers-desc). I used this list, to assign each villager a “wish score” by ranking the list in reverse order so the most wished-for villager has the highest wish score. For example, a bookish cat named [Raymond](https://animalcrossing.fandom.com/wiki/Raymond), the most wished for villager as of May 24, 2020, has the highest possible wish score at 381. [Pudge](https://animalcrossing.fandom.com/wiki/Pudge), a green-eared bear cub and sadly the least wished-for of all the villagers, has a wish score of 1. 
+To learn more about why players like and dislike certain villagers, we need a way to quantify a villager's desirability. [nook.market](nook.market) is a website where Animal Crossing players go to exchange villagers and furniture for bells, the in-game currency. On the website, players can view all the villagers in a list, sorted by [“most wished for”](https://nook.market/categories/257-villagers?sort=num_wishers-desc). I used this list to assign each villager a “wish score” by ranking the list in reverse order so the most wished-for villager has the highest wish score. For example, a bookish cat named [Raymond](https://animalcrossing.fandom.com/wiki/Raymond), the most wished for villager as of May 24, 2020, has the highest possible wish score at 381. [Pudge](https://animalcrossing.fandom.com/wiki/Pudge), a green-eared bear cub and sadly the least wished-for of all the villagers, has a wish score of 1. 
 
 ```{r}
 villagers %>% 
@@ -56,7 +56,7 @@ villagers %>%
   ggplot(data = ., 
          aes(x = reorder(personality, mean_wish), y = mean_wish, size = n)) +
   geom_point(color = "#1c7c24", alpha = .75) + 
-  labs(title = "Mean wish scores are similar across villager personalities", 
+  labs(title = "Mean wish scores across villager personalities", 
        subtitle = "Villager rankings from Nook Market on May 24, 2020",
        x = "", 
        y = "Wish score", 
@@ -124,9 +124,9 @@ ggplot(data = villagers, aes(x = wish_score)) +
        caption = "data: Nook Plaza and Nook Market")
 ```
 
-There isn’t any one personality that screams, “Pick me!” Not even the ostensibly desirable “normal” is a shield against low wish scores, nor does it a guarantee a spot next to the wish score champion, Raymond. 
+There isn’t any one personality that screams, “Pick me!” Not even the ostensibly desirable “normal” is a shield against low wish scores, nor does it guarantee a spot next to the wish score champion, Raymond. 
 
-On the other hand, you can identify species that are more likely to earn the wishes of the Animal Crossing player community. Rabbits and mice make up similar shares of the total villager population at 5 percent and 4 percent, respectively. But let’s just say I won’t be betting on a mouse for anyone’s first round draft pick: 
+On the other hand, you can identify species that are more likely to earn the love of the Animal Crossing player community. Rabbits and mice make up similar shares of the total villager population at 5 percent and 4 percent, respectively. But let’s just say I won’t be betting on a mouse for anyone’s first round draft pick: 
 
 ```{r rabbit v mouse}
 villagers %>% 
