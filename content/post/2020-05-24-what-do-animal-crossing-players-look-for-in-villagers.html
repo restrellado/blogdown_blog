@@ -1,0 +1,335 @@
+---
+title: What do Animal Crossing players look for in villagers?
+author: Ryan Estrellado
+date: '2020-05-24'
+slug: what-do-animal-crossing-players-look-for-in-villagers
+categories: []
+tags: []
+---
+
+<script src="/rmarkdown-libs/kePrint/kePrint.js"></script>
+
+
+<p>I spent a recent morning at a virtual island concert celebrating the arrival of a dog folk guitarist named K.K. Slider. The concert is a milestone in the game <em>Animal Crossing: New Horizons</em>, which has become odd comfort to me and others as during the COVID-19 stay-at-home orders. Demand of <em>Animal Crossing</em> caused the <a href="https://www.polygon.com/2020/3/26/21195490/nintendo-switch-where-to-buy-sold-out-stock-amazon-best-buy-target-shortage-covid-19-coronavirus">Nintendo Switch to join toilet paper and cleaning wipes on the list of near-impossible things to acquire</a> during the pandemic.</p>
+<p>In April of 2020, <a href="https://www.polygon.com/2020/4/29/21238552/animal-crossing-new-horizons-acnh-switch-ugly-villagers-trading-amiibo-moving-out">Polygon published a fascinating story</a> about a trend in the Animal Crossing community: players are ousting villagers–cute animal non-player characters–from their island because of the way they looked or acted.</p>
+<p>Using Animal Crossing datasets posted on Kaggle, I explored what makes some villagers desirable island residents, and what makes others <a href="https://twitter.com/xpatriciah/status/1245033802470166531">the object of fan mockery</a>.</p>
+<div id="villager-personality-types" class="section level2">
+<h2>Villager Personality Types</h2>
+<p>But first, a note on personality types. There are eight personality types in Animal Crossing: big sister, cranky, jock, lazy, normal, peppy, smug, and snooty. These personalities were originally found in the code for older Animal Crossing games like <em>New Leaf</em> and <em>Pocket Camp</em>, then translated from Japanese to English. The categories are, at best, comically simple. For example, there’s a personality type called “big sister” but, inexplicably, there’s no personality type called “big brother.” The saving grace of this somewhat pejorative personality system–-I can’t recommend using “jock” or “lazy” as personality descriptions in other contexts–-is they’re used in a video game that’s otherwise designed as a positive and escapist experience. But all the same, we should look <a href="https://projects.fivethirtyeight.com/personality-quiz/">elsewhere</a> when talking about <em>actual</em> personalities.</p>
+</div>
+<div id="the-wish-score" class="section level2">
+<h2>The Wish Score</h2>
+<p>To learn more about why players like and dislike certain villagers, we need a way to quantify a villager’s desirability. <a href="nook.market">nook.market</a> is a website where Animal Crossing players go to exchange villagers and furniture for bells, the in-game currency. On the website, players can view all the villagers in a list, sorted by <a href="https://nook.market/categories/257-villagers?sort=num_wishers-desc">“most wished for”</a>. I used this list, to assign each villager a “wish score” by ranking the list in reverse order so the most wished-for villager has the highest wish score. For example, a bookish cat named <a href="https://animalcrossing.fandom.com/wiki/Raymond">Raymond</a>, the most wished for villager as of May 24, 2020, has the highest possible wish score at 381. <a href="https://animalcrossing.fandom.com/wiki/Pudge">Pudge</a>, a green-eared bear cub and sadly the least wished-for of all the villagers, has a wish score of 1.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-1">Table 1: </span>Ten Most Wished For Villagers
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+name
+</th>
+<th style="text-align:left;">
+species
+</th>
+<th style="text-align:left;">
+personality
+</th>
+<th style="text-align:right;">
+wish score
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Raymond
+</td>
+<td style="text-align:left;">
+Cat
+</td>
+<td style="text-align:left;">
+Smug
+</td>
+<td style="text-align:right;">
+391
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Coco
+</td>
+<td style="text-align:left;">
+Rabbit
+</td>
+<td style="text-align:left;">
+Normal
+</td>
+<td style="text-align:right;">
+390
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lucky
+</td>
+<td style="text-align:left;">
+Dog
+</td>
+<td style="text-align:left;">
+Lazy
+</td>
+<td style="text-align:right;">
+389
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marshal
+</td>
+<td style="text-align:left;">
+Squirrel
+</td>
+<td style="text-align:left;">
+Smug
+</td>
+<td style="text-align:right;">
+388
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Bob
+</td>
+<td style="text-align:left;">
+Cat
+</td>
+<td style="text-align:left;">
+Lazy
+</td>
+<td style="text-align:right;">
+387
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Lolly
+</td>
+<td style="text-align:left;">
+Cat
+</td>
+<td style="text-align:left;">
+Normal
+</td>
+<td style="text-align:right;">
+386
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Audie
+</td>
+<td style="text-align:left;">
+Wolf
+</td>
+<td style="text-align:left;">
+Peppy
+</td>
+<td style="text-align:right;">
+385
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Ankha
+</td>
+<td style="text-align:left;">
+Cat
+</td>
+<td style="text-align:left;">
+Snooty
+</td>
+<td style="text-align:right;">
+384
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Judy
+</td>
+<td style="text-align:left;">
+Cub
+</td>
+<td style="text-align:left;">
+Snooty
+</td>
+<td style="text-align:right;">
+383
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Marina
+</td>
+<td style="text-align:left;">
+Octopus
+</td>
+<td style="text-align:left;">
+Normal
+</td>
+<td style="text-align:right;">
+382
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="personality-and-species" class="section level2">
+<h2>Personality and Species</h2>
+<p>A villager’s personality might explain why players don’t want them on their islands. For example, villagers who have the “jock” personality have the lowest mean wish score.</p>
+<p><img src="/post/2020-05-24-what-do-animal-crossing-players-look-for-in-villagers_files/figure-html/personality%20median-1.png" width="672" /></p>
+<p>But personality doesn’t fully explain why players are so desparate to attract Raymond and Coco to their island resorts. Players seem to care a lot about a villager’s species, even when taking the villager’s personalities into account. Wolves, octopuses, cats, deer, and rabbits had the highest mean wish scores.</p>
+<p><img src="/post/2020-05-24-what-do-animal-crossing-players-look-for-in-villagers_files/figure-html/species%20median-1.png" width="672" /></p>
+<p>Cats and mice, for example, make up similar shares of the villager population, yet cats have a higher average wish score than mice by 211 points.</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-2">Table 2: </span>Cat vs. Mouse (Cat Wins)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+species
+</th>
+<th style="text-align:right;">
+mean wish score
+</th>
+<th style="text-align:right;">
+standard dev
+</th>
+<th style="text-align:right;">
+count
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Cat
+</td>
+<td style="text-align:right;">
+304
+</td>
+<td style="text-align:right;">
+101
+</td>
+<td style="text-align:right;">
+23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Mouse
+</td>
+<td style="text-align:right;">
+93
+</td>
+<td style="text-align:right;">
+84
+</td>
+<td style="text-align:right;">
+15
+</td>
+</tr>
+</tbody>
+</table>
+<p>Even the three cat villagers who have the jock personality achieved decent to excellent places in the rankings. The lowest wish score of the three cat jocks was 169 and belongs to a feline named Stinky whose catchphrase is “GAAHHH.”</p>
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<caption>
+<span id="tab:unnamed-chunk-3">Table 3: </span>Cats With Jock Personalities
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+name
+</th>
+<th style="text-align:left;">
+species
+</th>
+<th style="text-align:left;">
+personality
+</th>
+<th style="text-align:left;">
+catchphrase
+</th>
+<th style="text-align:right;">
+wish score
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rudy
+</td>
+<td style="text-align:left;">
+Cat
+</td>
+<td style="text-align:left;">
+Jock
+</td>
+<td style="text-align:left;">
+mush
+</td>
+<td style="text-align:right;">
+333
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Kid Cat
+</td>
+<td style="text-align:left;">
+Cat
+</td>
+<td style="text-align:left;">
+Jock
+</td>
+<td style="text-align:left;">
+psst
+</td>
+<td style="text-align:right;">
+327
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Stinky
+</td>
+<td style="text-align:left;">
+Cat
+</td>
+<td style="text-align:left;">
+Jock
+</td>
+<td style="text-align:left;">
+GAAHHH
+</td>
+<td style="text-align:right;">
+169
+</td>
+</tr>
+</tbody>
+</table>
+<div class="figure">
+<img src="/images/EUrKFv9U4AEDzYa.jpeg" alt="Stinky, the cat with the lowest wish score among cat jocks, isn’t doing that bad for himself. Image: https://twitter.com/sleepiest_/status/1246030449643675649" />
+<p class="caption"><em>Stinky, the cat with the lowest wish score among cat jocks, isn’t doing that bad for himself. Image: <a href="https://twitter.com/sleepiest_/status/1246030449643675649" class="uri">https://twitter.com/sleepiest_/status/1246030449643675649</a></em></p>
+</div>
+<p>In fact, while the jock personality has the lowest mean wish score of all the Animal Crossing personality types, it’s not all doom and gloom for villagers obsessed with exercise. There’s quite a range of outcomes for those with the jock personality. Dom, a jock sheep whose favorite K.K. Slider song is <em>K.K. Country</em>, has one of the highest wish scores at 378. On the other hand, Sparro, a jock bird who’s favorite hobby is fitness, has a dismal wish score of 68. His catchphrase is “Like, whoa.”</p>
+<p>Indeed you’ll find a wide range of villager desirability in all personality types. Have a look at the range of wish scores on these plots:</p>
+<p><img src="/post/2020-05-24-what-do-animal-crossing-players-look-for-in-villagers_files/figure-html/personality%20panel-1.png" width="672" /></p>
+<p>There isn’t any one personality that screams, “Pick me!” Not even the ostensibly desirable “normal” is a shield against low wish scores, nor does it a guarantee a spot next to the wish score champion, Raymond.</p>
+<p>On the other hand, you can identify species that are more likely to earn the wishes of the Animal Crossing player community. Rabbits and mice make up similar shares of the total villager population at 5 percent and 4 percent, respectively. But let’s just say I won’t be betting on a mouse for anyone’s first round draft pick:</p>
+<p><img src="/post/2020-05-24-what-do-animal-crossing-players-look-for-in-villagers_files/figure-html/rabbit%20v%20mouse-1.png" width="672" /></p>
+<p>Personally, my favorite villager is a chicken named Goose. I don’t particularly care that he’s obssessed with fitness (and he is obsessed–once he told me he worked out so hard he fainted) or that he’s a chicken. Goose was the first villager to set up camp on my island as my family and I spent our first few evenings locked down. It’s hard to imagine my island without him.</p>
+<p><em>You can find all the code for this analysis on my <a href="https://github.com/restrellado/animal_crossing">GitHub account</a>. Thank you to Nook Plaza for collecting the data and to Kaggle for hosting it.</em></p>
+</div>

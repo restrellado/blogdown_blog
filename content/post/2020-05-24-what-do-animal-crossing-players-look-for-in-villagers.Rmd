@@ -1,0 +1,146 @@
+---
+title: What do Animal Crossing players look for in villagers?
+author: Ryan Estrellado
+date: '2020-05-24'
+slug: what-do-animal-crossing-players-look-for-in-villagers
+categories: []
+tags: []
+---
+
+```{r packages, message=FALSE, echo=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(knitr)
+```
+
+```{r options, message=FALSE, echo=FALSE}
+opts_chunk$set(echo = FALSE, message = FALSE)
+```
+
+```{r load data}
+villagers <- read_csv("https://raw.githubusercontent.com/restrellado/animal_crossing/master/output/vil_ranks.csv")
+```
+
+I spent a recent morning at a virtual island concert celebrating the arrival of a dog folk guitarist named K.K. Slider. The concert is a milestone in the game *Animal Crossing: New Horizons*, which has become odd comfort to me and others as during the COVID-19 stay-at-home orders. Demand of *Animal Crossing* caused the [Nintendo Switch to join toilet paper and cleaning wipes on the list of near-impossible things to acquire](https://www.polygon.com/2020/3/26/21195490/nintendo-switch-where-to-buy-sold-out-stock-amazon-best-buy-target-shortage-covid-19-coronavirus) during the pandemic. 
+
+In April of 2020, [Polygon published a fascinating story](https://www.polygon.com/2020/4/29/21238552/animal-crossing-new-horizons-acnh-switch-ugly-villagers-trading-amiibo-moving-out) about a trend in the Animal Crossing community: players are ousting villagers--cute animal non-player characters--from their island because of the way they looked or acted. 
+
+Using Animal Crossing datasets posted on Kaggle, I explored what makes some villagers desirable island residents, and what makes others [the object of fan mockery](https://twitter.com/xpatriciah/status/1245033802470166531). 
+
+## Villager Personality Types 
+
+But first, a note on personality types. There are eight personality types in Animal Crossing: big sister, cranky, jock, lazy, normal, peppy, smug, and snooty. These personalities were originally found in the code for older Animal Crossing games like *New Leaf* and *Pocket Camp*, then translated from Japanese to English. The categories are, at best, comically simple. For example, there's a personality type called “big sister” but, inexplicably, there's no personality type called “big brother.” The saving grace of this somewhat pejorative personality system–-I can’t recommend using “jock” or “lazy” as personality descriptions in other contexts–-is they’re used in a video game that's otherwise designed as a positive and escapist experience. But all the same, we should look [elsewhere](https://projects.fivethirtyeight.com/personality-quiz/) when talking about *actual* personalities. 
+
+## The Wish Score 
+
+To learn more about why players like and dislike certain villagers, we need a way to quantify a villager's desirability. [nook.market](nook.market) is a website where Animal Crossing players go to exchange villagers and furniture for bells, the in-game currency. On the website, players can view all the villagers in a list, sorted by [“most wished for”](https://nook.market/categories/257-villagers?sort=num_wishers-desc). I used this list, to assign each villager a “wish score” by ranking the list in reverse order so the most wished-for villager has the highest wish score. For example, a bookish cat named [Raymond](https://animalcrossing.fandom.com/wiki/Raymond), the most wished for villager as of May 24, 2020, has the highest possible wish score at 381. [Pudge](https://animalcrossing.fandom.com/wiki/Pudge), a green-eared bear cub and sadly the least wished-for of all the villagers, has a wish score of 1. 
+
+```{r}
+villagers %>% 
+  select(name, species, personality, wish_score) %>% 
+  arrange(desc(wish_score)) %>% 
+  head(n = 10) %>% 
+  kable(caption = "Ten Most Wished For Villagers", 
+        col.names = c("name", "species", "personality", "wish score")) %>% 
+  kable_styling()
+```
+
+## Personality and Species 
+
+A villager's personality might explain why players don't want them on their islands. For example, villagers who have the “jock” personality have the lowest mean wish score.
+
+```{r personality median}
+villagers %>% 
+  group_by(personality) %>% 
+  summarize(mean_wish = mean(wish_score), n = n()) %>%  
+  ggplot(data = ., 
+         aes(x = reorder(personality, mean_wish), y = mean_wish, size = n)) +
+  geom_point(color = "#1c7c24", alpha = .75) + 
+  labs(title = "Mean wish scores are similar across villager personalities", 
+       subtitle = "Villager rankings from Nook Market on May 24, 2020",
+       x = "", 
+       y = "Wish score", 
+       caption = "data: Nook Plaza and Nook Market") +
+  coord_flip() 
+```
+
+But personality doesn't fully explain why players are so desparate to attract Raymond and Coco to their island resorts. Players seem to care a lot about a villager's species, even when taking the villager's personalities into account. Wolves, octopuses, cats, deer, and rabbits had the highest mean wish scores. 
+
+```{r species median}
+villagers %>% 
+  group_by(species) %>% 
+  summarize(mean_wish = mean(wish_score), n = n()) %>%  
+  ggplot(data = ., 
+         aes(x = reorder(species, mean_wish), y = mean_wish, size = n)) +
+  geom_point(color = "#1c7c24", alpha = .75) + 
+  labs(title = "Players probably wish for wolves more than they do hippos", 
+       subtitle = "Villager rankings from Nook Market on May 24, 2020",
+       x = "", 
+       y = "Wish score", 
+       caption = "data: Nook Plaza and Nook Market") +
+  coord_flip() 
+```
+
+Cats and mice, for example, make up similar shares of the villager population, yet cats have a higher average wish score than mice by 211 points.
+
+```{r}
+villagers %>% 
+  filter(species %in% c("Cat", "Mouse")) %>% 
+  group_by(species) %>% 
+  summarize(mean_wish = round(mean(wish_score)), 
+            sd = round(sd(wish_score)), 
+            count = n()) %>% 
+  kable(caption = "Cat vs. Mouse (Cat Wins)", 
+        col.names = c("species", "mean wish score", "standard dev", "count")) %>% 
+  kable_styling()
+```
+
+Even the three cat villagers who have the jock personality achieved decent to excellent places in the rankings. The lowest wish score of the three cat jocks was 169 and belongs to a feline named Stinky whose catchphrase is “GAAHHH.” 
+
+```{r}
+villagers %>% 
+  select(name, species, personality, catchphrase, wish_score) %>% 
+  filter(species == "Cat", personality == "Jock") %>% 
+  arrange(desc(wish_score)) %>% 
+  kable(caption = "Cats With Jock Personalities", 
+        col.names = c("name", "species", "personality", "catchphrase", "wish score")) %>% 
+  kable_styling()
+```
+
+![*Stinky, the cat with the lowest wish score among cat jocks, isn't doing that bad for himself. Image: https://twitter.com/sleepiest_/status/1246030449643675649*](/images/EUrKFv9U4AEDzYa.jpeg)
+
+In fact, while the jock personality has the lowest mean wish score of all the Animal Crossing personality types, it’s not all doom and gloom for villagers obsessed with exercise. There’s quite a range of outcomes for those with the jock personality. Dom, a jock sheep whose favorite K.K. Slider song is *K.K. Country*, has one of the highest wish scores at 378. On the other hand, Sparro, a jock bird who’s favorite hobby is fitness, has a dismal wish score of 68. His catchphrase is “Like, whoa.”
+
+Indeed you'll find a wide range of villager desirability in all personality types. Have a look at the range of wish scores on these plots: 
+
+```{r personality panel}
+ggplot(data = villagers, aes(x = wish_score)) + 
+  geom_histogram(fill = "#1c7c24", alpha = .75) + 
+  facet_wrap(vars(personality)) + 
+  labs(title = "No one villager personality captures the Animal Crossing zeitgeist", 
+       subtitle = "Distribution of wish scores based on Nook Market, May 24, 2020",
+       x = "Wish score", 
+       y = "", 
+       caption = "data: Nook Plaza and Nook Market")
+```
+
+There isn’t any one personality that screams, “Pick me!” Not even the ostensibly desirable “normal” is a shield against low wish scores, nor does it a guarantee a spot next to the wish score champion, Raymond. 
+
+On the other hand, you can identify species that are more likely to earn the wishes of the Animal Crossing player community. Rabbits and mice make up similar shares of the total villager population at 5 percent and 4 percent, respectively. But let’s just say I won’t be betting on a mouse for anyone’s first round draft pick: 
+
+```{r rabbit v mouse}
+villagers %>% 
+  filter(species %in% c("Mouse", "Rabbit")) %>% 
+  ggplot(data = ., aes(x = wish_score)) + 
+  geom_histogram(fill = "#1c7c24", alpha = .75) + 
+  facet_wrap(vars(species)) + 
+  labs(title = "Players probably prefer rabbits over mice", 
+       subtitle = "Distribution of wish scores based on Nook Market, May 24, 2020",
+       x = "Wish score", 
+       y = "", 
+       caption = "data: Nook Plaza and Nook Market")
+```
+
+Personally, my favorite villager is a chicken named Goose. I don't particularly care that he's obssessed with fitness (and he is obsessed--once he told me he worked out so hard he fainted). The fact that he's a chicken doesn't give me any strong feelings. Goose was the first villager to set up camp on my island as my family and I spent our first few evenings locked down. It's hard to imagine my island without him. 
+
+*You can find all the code for this analysis on my [GitHub account](https://github.com/restrellado/animal_crossing). Thank you to Nook Plaza for collecting the data and to Kaggle for hosting it.*
